@@ -2,7 +2,13 @@
 
 namespace App\Enums;
 
-enum TransmissionType
+use App\Traits\EnumToArray;
+
+enum TransmissionType :string
 {
+    use EnumToArray;
+ case Automatic = 'automatic';
+ case Manuel = 'manual';
+ case SemiAutomatic = 'semi-automatic';
 
 }
