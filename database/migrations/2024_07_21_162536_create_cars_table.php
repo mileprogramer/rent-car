@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('brand', 100);
             $table->string('year');
             $table->integer('price_per_day');
-            $table->enum('transmission_type', ["automatic","manuel","semi-automatic",""]);
+            $table->enum('transmission_type', \App\Enums\TransmissionType::values());
             $table->string('number_of_doors');
             $table->string('person_fit_in');
             $table->string('car_consumption');
-            $table->enum('air_conditioning_type', ["Manual","Automatic","DualZone","MultiZone","RearSeat","Electric","Hybrid","SolarPowered"]);
-            $table->enum('status', ["available","rented","sold","broken",""]);
+            $table->enum('air_conditioning_type', \App\Enums\AirConditionerType::values());
+            $table->enum('status', \App\Enums\CarStatus::values());
             $table->timestamps();
         });
     }

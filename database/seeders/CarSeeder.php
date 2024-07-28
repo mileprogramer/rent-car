@@ -25,7 +25,7 @@ class CarSeeder extends Seeder
                 'number_of_doors' => 4,
                 'person_fit_in' => 5,
                 'car_consumption' => 15.5,
-                'air_conditioning_type' => 'DualZone',
+                'air_conditioning_type' => 'dual zone',
                 'status' => 'available',
             ],
             [
@@ -34,11 +34,11 @@ class CarSeeder extends Seeder
                 'brand' => 'Honda',
                 'year' => 2019,
                 'price_per_day' => 60.00,
-                'transmission_type' => 'manuel',
+                'transmission_type' => 'manual',
                 'number_of_doors' => 4,
                 'person_fit_in' => 5,
                 'car_consumption' => 12.5,
-                'air_conditioning_type' => 'Manual',
+                'air_conditioning_type' => 'manual',
                 'status' => 'rented',
             ],
             [
@@ -51,7 +51,7 @@ class CarSeeder extends Seeder
                 'number_of_doors' => 4,
                 'person_fit_in' => 5,
                 'car_consumption' => 13.2,
-                'air_conditioning_type' => 'Automatic',
+                'air_conditioning_type' => 'automatic',
                 'status' => 'available',
             ],
             [
@@ -64,7 +64,7 @@ class CarSeeder extends Seeder
                 'number_of_doors' => 2,
                 'person_fit_in' => 4,
                 'car_consumption' => 10.5,
-                'air_conditioning_type' => 'Electric',
+                'air_conditioning_type' => 'electric',
                 'status' => 'sold',
             ],
             [
@@ -73,11 +73,11 @@ class CarSeeder extends Seeder
                 'brand' => 'Honda',
                 'year' => 2017,
                 'price_per_day' => 70.00,
-                'transmission_type' => 'manuel',
+                'transmission_type' => 'manual',
                 'number_of_doors' => 4,
                 'person_fit_in' => 5,
                 'car_consumption' => 11.7,
-                'air_conditioning_type' => 'RearSeat',
+                'air_conditioning_type' => 'rear seat',
                 'status' => 'broken',
             ],
             [
@@ -90,7 +90,7 @@ class CarSeeder extends Seeder
                 'number_of_doors' => 4,
                 'person_fit_in' => 5,
                 'car_consumption' => 14.5,
-                'air_conditioning_type' => 'MultiZone',
+                'air_conditioning_type' => 'multi zone',
                 'status' => 'available',
             ],
         ];
