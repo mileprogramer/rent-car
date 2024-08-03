@@ -15,4 +15,6 @@ enum AirConditionerType :string
     case Electric = 'electric';
     case Hybrid = 'hybrid';
     case SolarPowered = 'solar powered';
+
+    case None = 'none';
 }
