@@ -11,9 +11,9 @@ class CarController extends Controller
     /**
      * Display a listing of the cars
      */
-    public function index() : Collection
+    public function index()
     {
-        return Car::all();
+        return response()->json(Car::paginate());
     }
 
     /**
@@ -40,7 +40,7 @@ class CarController extends Controller
                 $query->where($column, $request->query($column));
             }
         }
-        return response()->json($query->get(), 200);
+        return response()->json($query->get()->paginate(), 200);
     }
 
     /**
@@ -86,14 +86,5 @@ class CarController extends Controller
         return response()->json([
             'car' => $car
         ], 200);
-    }
-
-
-    /**
-     * Show the statistics of the rentedCars
-     */
-    public function statistics()
-    {
-        // code ....
     }
 }

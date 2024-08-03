@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +35,22 @@ class SoldCar extends Model
         'id' => 'integer',
         'car_id' => 'integer',
     ];
+
+    protected function rules() :array
+    {
+        return [
+            'car_id' => ['exists:cars,id'],
+            'date_of_sale' => ['date'],
+            'price' => ['integer', 'min:1']
+        ];
+    }
+
+    protected function dateOfSale(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d'),
+        );
+    }
 
     public function car(): BelongsTo
     {
