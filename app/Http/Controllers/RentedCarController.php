@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Car;
 use App\Models\RentedCar;
 use Illuminate\Http\Request;
 use \Illuminate\Database\Eloquent\Collection;
@@ -11,17 +12,9 @@ class RentedCarController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Collection
+    public function index()
     {
-        return RentedCar::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json(RentedCar::paginate());
     }
 
     /**
@@ -29,13 +22,16 @@ class RentedCarController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate(RentedCar::rules($request->all()));
+        RentedCar::create($data);
+        // rentedCar observer is called to update the car status
+        return response()->json(['message'=> 'Successfully rented car'], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Extend the rent
      */
-    public function show(string $id)
+    public function extend(string $id)
     {
         //
     }

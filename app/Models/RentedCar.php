@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Rules\ReasonForDiscount;
+use App\Rules\ReturnDate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,6 +39,24 @@ class RentedCar extends Model
         'car_id' => 'integer',
         'user_id' => 'integer',
     ];
+
+    public static function status() :string
+    {
+        return 'rented';
+    }
+    public static function rules(array $requestData = []) :array
+    {
+        return [
+            'user_id' => ['exists:users,id'],
+            'car_id' => ['exists:cars,id'],
+            'start_date' => ['date'],
+            'return_date' => ['date', (new ReturnDate())->setData($requestData)],
+            'price_per_day' => ['numeric', 'required'],
+            'discount' => ['numeric', 'max:100', 'min:0'],
+            'reason_for_discount' => (new ReasonForDiscount())->setData($requestData),
+            'extended_rent' => 'bool',
+        ];
+    }
 
     public function car(): BelongsTo
     {
