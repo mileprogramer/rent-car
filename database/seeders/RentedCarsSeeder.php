@@ -31,7 +31,7 @@ class RentedCarsSeeder extends Seeder
                 'return_date' => now()->addDays(rand(1, 30))->toDateString(),
                 'price_per_day' => $car->price_per_day,
                 'discount' => 0,
-                'reason_for_discount' => 0,
+                'reason_for_discount' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
