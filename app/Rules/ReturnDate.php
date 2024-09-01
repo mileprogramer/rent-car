@@ -32,7 +32,7 @@ class ReturnDate implements ValidationRule
         $msgs = [
             'return_date' => 'Return date must be after start date',
             'start_date_repair' => 'Start date of repair must be after broke date',
-            'returned_date' => 'Returned date must be after the date and time of the start date repair'
+            'returned_date' => 'Returned date must be after the date of the start date repair'
         ];
         return $msgs[$key];
     }

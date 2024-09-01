@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CarStatus;
 use App\Models\BrokenCar;
+use App\Models\Car;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Psy\Util\Json;
 
 class BrokenCarController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() :JsonResponse
     {
         $cars = BrokenCar::paginate();
 
@@ -28,7 +32,7 @@ class BrokenCarController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request) :JsonResponse
     {
         $carData = $request->validate(BrokenCar::rules_start($request->all()));
         BrokenCar::create($carData);
@@ -39,7 +43,7 @@ class BrokenCarController extends Controller
     /**
      * Store a date for the going to service.
      */
-    public function goToService(Request $request)
+    public function goToService(Request $request) :JsonResponse
     {
         $car = BrokenCar::where('car_id', $request->input('car_id'))->firstOrFail();
         $carData = $request->validate(BrokenCar::rules_medium($car->toArray()));
@@ -51,9 +55,18 @@ class BrokenCarController extends Controller
     /**
      * Store the date when car is fixed
      */
-    public function fixed(Request $request)
+    public function fixed(Request $request) :JsonResponse
     {
-        //
+        $car = BrokenCar::where('car_id', $request->input('car_id'))->firstOrFail();
+        $carData = $request->validate(BrokenCar::rules_end($car->toArray()));
+        $car->update([
+            'returned_date'=> $carData['returned_date'],
+            'cost' => $carData['cost'],
+            'report' => $carData['report'],
+        ]);
+        Car::where('id', $carData['car_id'])->update(['status'=> CarStatus::Available]);
+
+        return response()->json(['message'=> 'Car status was successfully changed to fixed']);
     }
 
     /**

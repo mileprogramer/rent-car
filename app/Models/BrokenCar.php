@@ -18,7 +18,9 @@ class BrokenCar extends Model
         "description",
         "user_fault",
         "start_date_repair",
-        "return_date",
+        "returned_date",
+        "cost",
+        "report"
     ];
 
     // Rules used when admin wants to write that car is broken
@@ -41,7 +43,7 @@ class BrokenCar extends Model
     public static function rules_medium(array $requestData = []) :array
     {
         return [
-            'car_id' => ['exists:broken_cars,car_id'],
+            'car_id' => ['required', 'exists:broken_cars,car_id'],
             'start_date_repair' => ['required', (new ReturnDate())->setData(["start_date"=> $requestData['start_date_broke']])]
         ];
     }
@@ -49,14 +51,10 @@ class BrokenCar extends Model
     public static function rules_end(array $requestData = []) :array
     {
         return [
-            'car_id' => ['exists:cars,id'],
-            'return_date' => function() use($requestData){
-                $car = BrokenCar::where('car_id', $requestData['car_id'])->first();
-                return (new ReturnDate())->setData([
-                    'start_date' => $car->repair_date,
-                ]);
-            },
-
+            'car_id' => ['required', 'exists:broken_cars,car_id'],
+            'returned_date' => ['required', (new ReturnDate())->setData(["start_date"=> $requestData['start_date_repair']])],
+            'cost' => ['required', 'numeric', 'min:0'],
+            'report' => ['required', 'string', 'min:10']
         ];
     }
 
