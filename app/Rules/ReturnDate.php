@@ -18,13 +18,23 @@ class ReturnDate implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if(strtotime($this->data["start_date"]) > strtotime($value))
-            $fail('Return date must be after start date');
+            $fail($this->failedMsgs($attribute));
     }
 
     public function setData(array $data) :static
     {
         $this->data = $data;
         return $this;
+    }
+
+    private function failedMsgs($key) :string
+    {
+        $msgs = [
+            'return_date' => 'Return date must be after start date',
+            'start_date_repair' => 'Start date of repair must be after broke date',
+            'returned_date' => 'Returned date must be after the date and time of the start date repair'
+        ];
+        return $msgs[$key];
     }
 
 }
