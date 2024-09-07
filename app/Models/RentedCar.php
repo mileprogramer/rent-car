@@ -7,6 +7,7 @@ use App\Rules\ReturnDate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RentedCar extends Model
 {
@@ -47,17 +48,31 @@ class RentedCar extends Model
     public static function rules(array $requestData = []) :array
     {
         return [
-            'user_id' => ['exists:users,id'],
-            'car_id' => ['exists:cars,id'],
-            'start_date' => ['date'],
-            'return_date' => ['date', (new ReturnDate())->setData($requestData)],
-            'price_per_day' => ['numeric', 'required'],
-            'discount' => ['numeric', 'max:100', 'min:0'],
-            'reason_for_discount' => (new ReasonForDiscount())->setData($requestData),
+            'user_id' => ["required", 'exists:users,id'],
+            'car_id' => ["required",
+                function($attribute, $value, $fail) use ($requestData) {
+                    $carExists = Car::where('status', Car::status())
+                        ->where('id', $requestData['car_id'])
+                        ->exists();
+                    if (!$carExists) {
+                        $fail('The selected car either does not exist or does not have the required status: ' . Car::status());
+                    }
+            }],
+            'start_date' => ["required", 'date'],
+            'return_date' => ["required", 'date', (new ReturnDate())->setData($requestData)],
+            'price_per_day' => ["required", 'numeric', 'required'],
+            'discount' => ["required", 'numeric', 'max:100', 'min:0'],
+            'reason_for_discount' => ["required", "required", (new ReasonForDiscount())->setData($requestData)],
             'extended_rent' => 'bool',
         ];
     }
 
+
+    public function inStatistics() :HasOne
+    {
+        // custom relationships
+        return $this->hasOne(Statistics::class, 'created_at', "created_at");
+    }
     public function car(): BelongsTo
     {
         return $this->belongsTo(Car::class);

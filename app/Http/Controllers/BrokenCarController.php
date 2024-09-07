@@ -16,7 +16,7 @@ class BrokenCarController extends Controller
      */
     public function index() :JsonResponse
     {
-        $cars = BrokenCar::paginate();
+        $cars = BrokenCar::whereNotNull('returned_date')->paginate();
 
         return response()->json($cars);
     }

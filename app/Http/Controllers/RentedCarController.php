@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\RentedCar;
+use App\Models\Statistics;
 use Illuminate\Http\Request;
 use \Illuminate\Database\Eloquent\Collection;
 
@@ -23,41 +24,34 @@ class RentedCarController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate(RentedCar::rules($request->all()));
-        RentedCar::create($data);
-        // rentedCar observer is called to update the car status
+        $rentedCar = RentedCar::create($data);
+        $data['created_at'] = $rentedCar['created_at'];
+        Statistics::create($data);
+        Car::where('id', $data['car_id'])->update(['status' => RentedCar::status()]);
+
         return response()->json(['message'=> 'Successfully rented car'], 201);
     }
 
     /**
-     * Extend the rent
+     * When user returns car, remove the specified car
      */
-    public function extend(string $id)
+    public function return(Request $request)
     {
-        //
-    }
+        if(isset($request->all()['car_id']))
+        {
+            $carId = $request->all()['car_id'];
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+            $rentedCar = RentedCar::where('car_id', $carId)->firstOrFail();
+            Car::where('id', $carId)->update(['status' => Car::status()]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            $rentedCar->delete();
+            return response()->json([
+                'message' => 'Successfully returned car',
+            ]);
+        }
+        return response()->json([
+            'message' => 'Bad request',
+        ], 403);
     }
 
 }

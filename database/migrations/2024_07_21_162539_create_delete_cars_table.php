@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('sold_cars', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('car_id');
-            $table->date('date_of_sale');
-            $table->integer('price');
-            $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
+            $table->string('reason_for_delete');
+            $table->foreign('car_id')->references('id')->on('cars');
             $table->timestamps();
         });
     }

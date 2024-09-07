@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('price_per_day');
             $table->integer('discount');
             $table->string('reason_for_discount');
+            $table->boolean( "extend_rent")->default(false);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
             $table->timestamps();

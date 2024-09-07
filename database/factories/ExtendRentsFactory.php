@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Car;
-use App\Models\ExtendRents;
+use App\Models\ExtendRent;
 use App\Models\User;
 
 class ExtendRentsFactory extends Factory
@@ -15,7 +15,7 @@ class ExtendRentsFactory extends Factory
      *
      * @var string
      */
-    protected $model = ExtendRents::class;
+    protected $model = ExtendRent::class;
 
     /**
      * Define the model's default state.

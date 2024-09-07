@@ -43,6 +43,11 @@ class Car extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
+    public static function status() :string
+    {
+        return 'available';
+    }
+
     public static function rules() :array
     {
         return [

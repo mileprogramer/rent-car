@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class SoldCar extends Model
+class DeleteCar extends Model
 {
     use HasFactory;
 
@@ -18,10 +18,8 @@ class SoldCar extends Model
      * @var array
      */
     protected $fillable = [
-        'id_car',
-        'date_of_sale',
-        'price',
         'car_id',
+        'reason_for_delete'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -31,26 +29,20 @@ class SoldCar extends Model
      *
      * @var array
      */
-    protected $casts = [
-        'id' => 'integer',
-        'car_id' => 'integer',
-    ];
+
+    public static function status() :string
+    {
+        return 'deleted';
+    }
 
     protected function rules() :array
     {
         return [
-            'car_id' => ['exists:cars,id'],
-            'date_of_sale' => ['date'],
-            'price' => ['integer', 'min:1']
+            'car_id' => ['required', 'exists:cars,id'],
+            'reason_for_delete' => ['required' ,'string']
         ];
     }
 
-    protected function dateOfSale(): Attribute
-    {
-        return Attribute::make(
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d'),
-        );
-    }
 
     public function car(): BelongsTo
     {

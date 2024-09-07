@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('car_id');
+            $table->unsignedBigInteger('statistics_id');
             $table->date('start_date');
             $table->date('return_date');
-            $table->date('extend_start_date');
             $table->integer('price_per_day');
             $table->integer('discount');
             $table->string('reason_for_discount');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('car_id')->references('id')->on('cars');
+            $table->foreign('statistics_id')->references('id')->on('statistics');
             $table->timestamps();
         });
     }

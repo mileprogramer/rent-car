@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Statistics extends Model
 {
@@ -39,6 +40,14 @@ class Statistics extends Model
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
+
+    // relationships
+
+    public function rentedCars() :HasMany
+    {
+        return $this->hasMany(RentedCar::class, "car_id", "car_id");
+    }
+
 
     public function car(): BelongsTo
     {

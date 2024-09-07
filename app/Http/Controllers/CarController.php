@@ -13,6 +13,8 @@ class CarController extends Controller
      */
     public function index()
     {
+        $cars = Car::orderByRaw("FIELD(status, {Car::status()}, 'RentedCar::status()', 'broken', 'sold')") // to do
+            ->paginate(10);
         return response()->json(Car::paginate());
     }
 

@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Car;
-use App\Models\SoldCar;
+use App\Models\DeleteCar;
 
 class SoldCarFactory extends Factory
 {
@@ -14,7 +14,7 @@ class SoldCarFactory extends Factory
      *
      * @var string
      */
-    protected $model = SoldCar::class;
+    protected $model = DeleteCar::class;
 
     /**
      * Define the model's default state.
