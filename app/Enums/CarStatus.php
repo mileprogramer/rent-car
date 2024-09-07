@@ -8,7 +8,7 @@ enum CarStatus :string
 {
     use EnumToArray;
     case Broken = 'broken';
-    case Sold = 'sold';
+    case Deleted = 'deleted';
 
     case Rented = 'rented';
 

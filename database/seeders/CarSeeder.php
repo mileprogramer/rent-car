@@ -65,7 +65,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 4,
                 'car_consumption' => 10.5,
                 'air_conditioning_type' => 'electric',
-                'status' => 'sold',
+                'status' => 'deleted',
             ],
             [
                 'license' => strtoupper(Str::random(7)),

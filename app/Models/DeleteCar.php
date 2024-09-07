@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DeleteCar extends Model
 {
     use HasFactory;
-
+    protected $table = 'deleted_cars';
     /**
      * The attributes that are mass assignable.
      *
@@ -38,7 +38,7 @@ class DeleteCar extends Model
     protected function rules() :array
     {
         return [
-            'car_id' => ['required', 'exists:cars,id'],
+            'car_id' => ['required', 'exists:cars,id', 'unique:deleted_cars'],
             'reason_for_delete' => ['required' ,'string']
         ];
     }
