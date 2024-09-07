@@ -14,4 +14,15 @@ enum CarStatus :string
 
     case Available = 'available';
 
+
+    public static function getStatusByOrder() :string
+    {
+        $carStatus = [
+            CarStatus::Available->value,
+            CarStatus::Rented->value,
+            CarStatus::Broken->value,
+            CarStatus::Deleted->value,
+        ];
+        return "'" . implode("', '", $carStatus) . "'";
+    }
 }

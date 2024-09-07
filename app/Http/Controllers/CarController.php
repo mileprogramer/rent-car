@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CarStatus;
 use App\Models\Car;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 
 class CarController extends Controller
 {
@@ -13,9 +15,7 @@ class CarController extends Controller
      */
     public function index()
     {
-        $cars = Car::orderByRaw("FIELD(status, {Car::status()}, 'RentedCar::status()', 'broken', 'sold')") // to do
-            ->paginate(10);
-        return response()->json(Car::paginate());
+        return response()->json($this->getCars());
     }
 
     /**
@@ -42,7 +42,7 @@ class CarController extends Controller
                 $query->where($column, $request->query($column));
             }
         }
-        return response()->json($query->get()->paginate(), 200);
+        return response()->json($this->getCars($query), 200);
     }
 
     /**
@@ -88,5 +88,15 @@ class CarController extends Controller
         return response()->json([
             'car' => $car
         ], 200);
+    }
+
+    protected function getCars($query = null)
+    {
+        $query = $query ?: Car::query();  // Use the passed query or create a new one
+
+        $carsStatus = CarStatus::getStatusByOrder();
+
+        return $query->orderByRaw("FIELD(status, $carsStatus)")
+            ->paginate(10);
     }
 }
