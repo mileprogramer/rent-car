@@ -29,6 +29,6 @@ class ExtenedRentController extends Controller
         }
         return response()->json([
             'message' => 'Mistake happened, you should contact support, The problem is this car is not in statistics'
-        ], 403);
+        ], 400);
     }
 }

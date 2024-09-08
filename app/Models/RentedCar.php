@@ -62,7 +62,7 @@ class RentedCar extends Model
             'return_date' => ["required", 'date', (new ReturnDate())->setData($requestData)],
             'price_per_day' => ["required", 'numeric', 'required'],
             'discount' => ["required", 'numeric', 'max:100', 'min:0'],
-            'reason_for_discount' => ["required", "required", (new ReasonForDiscount())->setData($requestData)],
+            'reason_for_discount' => [(new ReasonForDiscount())->setData($requestData)],
             'extended_rent' => 'bool',
         ];
     }

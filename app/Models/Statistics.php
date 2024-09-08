@@ -48,6 +48,10 @@ class Statistics extends Model
         return $this->hasMany(RentedCar::class, "car_id", "car_id");
     }
 
+    public function extendedRents() :HasMany
+    {
+        return $this->hasMany(ExtendRent::class, 'statistics_id', 'id');
+    }
 
     public function car(): BelongsTo
     {

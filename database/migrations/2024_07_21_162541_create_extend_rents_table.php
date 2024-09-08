@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('return_date');
             $table->integer('price_per_day');
             $table->integer('discount');
-            $table->string('reason_for_discount');
+            $table->string('reason_for_discount')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('car_id')->references('id')->on('cars');
             $table->foreign('statistics_id')->references('id')->on('statistics');

@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Models\RentedCar;
 use App\Models\Statistics;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use \Illuminate\Database\Eloquent\Collection;
+use Psy\Util\Json;
 
 class RentedCarController extends Controller
 {
@@ -43,15 +46,35 @@ class RentedCarController extends Controller
 
             $rentedCar = RentedCar::where('car_id', $carId)->firstOrFail();
             Car::where('id', $carId)->update(['status' => Car::status()]);
-
+            Statistics::update(['total_price' => $this->calculateTotalPrice()]);
             $rentedCar->delete();
+
             return response()->json([
                 'message' => 'Successfully returned car',
             ]);
         }
         return response()->json([
             'message' => 'Bad request',
-        ], 403);
+        ], 400);
+    }
+
+    /**
+     * Show admin info about total price extend rent, start_date and return date
+     */
+    public function details(Request $request) :JsonResponse
+    {
+        $car = Statistics::with('extendedRents')
+            ->where('car_id', $request->route('id'))
+            ->firstOrFail();
+
+        return response()->json([
+                'user_details' => User::where('id', $car->user_id)
+                                    ->select('name', 'phone', 'card_id')
+                                    ->first(),
+                'start_date' => $car->start_date,
+                'wanted_return_date' => $car->wanted_return_date,
+                'extendedRents' => $car->extendedRents,
+        ], 201);
     }
 
 }
