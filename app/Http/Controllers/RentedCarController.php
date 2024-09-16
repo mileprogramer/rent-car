@@ -18,7 +18,7 @@ class RentedCarController extends Controller
      */
     public function index()
     {
-        return response()->json(RentedCar::paginate());
+        return response()->json($this->getRentedCars());
     }
 
     /**
@@ -77,4 +77,8 @@ class RentedCarController extends Controller
         ], 201);
     }
 
+    protected function getRentedCars()
+    {
+        return RentedCar::with(['user:id,name,phone,card_id,email', 'car:id,license', "extendedRents"])->paginate(RentedCar::$carsPerPage);
+    }
 }

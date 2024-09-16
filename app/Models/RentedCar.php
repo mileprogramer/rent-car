@@ -45,6 +45,9 @@ class RentedCar extends Model
     {
         return 'rented';
     }
+
+    public static $carsPerPage = 10;
+
     public static function rules(array $requestData = []) :array
     {
         return [
@@ -67,6 +70,17 @@ class RentedCar extends Model
         ];
     }
 
+    public function extendedRents()
+    {
+        return $this->hasManyThrough(
+            ExtendRent::class,
+            Statistics::class,
+            'created_at',
+            'statistics_id',
+            'created_at',
+            'id'
+        );
+    }
 
     public function inStatistics() :HasOne
     {

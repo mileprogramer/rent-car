@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\CarStatus;
 use App\Models\Car;
+use App\Models\RentedCar;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -92,11 +93,23 @@ class CarController extends Controller
 
     protected function getCars($query = null)
     {
-        $query = $query ?: Car::query();  // Use the passed query or create a new one
+        $query = $query ?: Car::query();
 
         $carsStatus = CarStatus::getStatusByOrder();
 
-        return $query->orderByRaw("FIELD(status, $carsStatus)")
-            ->paginate(10);
+        $cars = $query->orderByRaw("FIELD(status, $carsStatus)")
+            ->paginate(Car::$carsPerPage);
+
+        $cars->getCollection()->transform(function ($car) {
+            $car->available = $car->status === Car::status() ? true : false;
+            $car->color = CarStatus::getColor($car->status);
+            if($car->status === RentedCar::status())
+            {
+                $car->returned_date = $car->rentedCar?->return_date;
+            }
+            return $car;
+        });
+
+        return $cars;
     }
 }

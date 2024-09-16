@@ -20,16 +20,15 @@ use App\Http\Controllers\StatisticController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
 Route::get('cars', [CarController::class, 'index']);
 Route::get('cars/filter', [CarController::class, 'filter']);
 Route::get('cars/deleted', [DeleteCarController::class, 'index']);
 Route::get('cars/rented', [RentedCarController::class, 'index']);
-Route::get('cars/statistics', [StatisticController::class, 'index']); // to do
+Route::get('cars/statistics', [StatisticController::class, 'index']);
 Route::get('cars/broken', [BrokenCarController::class, 'index']);
 Route::get('/car/edit/{car}', [CarController::class, 'edit']);
 Route::get('/car/show/{car}', [CarController::class, 'edit']);
-Route::get('/car/rent/details/{id}', [RentedCarController::class, 'details']);
+Route::get('/car/rent/details/{id}', [RentedCarController::class, 'details']);// add total_price
 
 Route::post('/car/add', [CarController::class, 'store']);
 Route::post('/car/update/{id}', [CarController::class, 'update']);
@@ -39,5 +38,5 @@ Route::post('/car/broke/service', [BrokenCarController::class, 'goToService']);
 Route::post('/car/broke/fixed', [BrokenCarController::class, 'fixed']);
 Route::post('/car/rent', [RentedCarController::class, 'store']);
 Route::post('/car/rent/extend', [ExtenedRentController::class, 'store']);
-Route::post('/car/rent/return', [RentedCarController::class, 'return']);
+Route::post('/car/rent/return', [RentedCarController::class, 'return']);// add total_price
 

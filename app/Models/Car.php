@@ -48,6 +48,8 @@ class Car extends Model
         return 'available';
     }
 
+    public static $carsPerPage = 10;
+
     public static function rules() :array
     {
         return [

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class ExtendRent extends Model
 {
     use HasFactory;
-
+    protected $table = 'extended_rents';
     /**
      * The attributes that are mass assignable.
      *
@@ -30,6 +30,8 @@ class ExtendRent extends Model
         'car_id',
         'user_id',
         'statistics_id',
+        'created_at',
+        'updated_at'
     ];
 
     /**
@@ -59,8 +61,6 @@ class ExtendRent extends Model
             'reason_for_discount' => (new ReasonForDiscount())->setData($requestData),
         ];
     }
-
-    protected $hidden = ['created_at', 'updated_at'];
 
     // relationships
     public function car(): BelongsTo
