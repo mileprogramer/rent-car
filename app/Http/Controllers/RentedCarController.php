@@ -27,10 +27,12 @@ class RentedCarController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate(RentedCar::rules($request->all()));
+        $car = Car::where('id', $data['car_id'])->firstOrFail();
+        $data['price_per_day'] = $car->price_per_day;
         $rentedCar = RentedCar::create($data);
         $data['created_at'] = $rentedCar['created_at'];
         Statistics::create($data);
-        Car::where('id', $data['car_id'])->update(['status' => RentedCar::status()]);
+        $car->update(['status' => RentedCar::status()]);
 
         return response()->json(['message'=> 'Successfully rented car'], 201);
     }
