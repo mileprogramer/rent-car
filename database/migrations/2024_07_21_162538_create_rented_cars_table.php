@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('car_id');
             $table->date('start_date');
             $table->date('return_date');
-            $table->integer('price_per_day');
+            $table->integer('price_per_day')->comment('This is the price when client first time rent a car');;
             $table->integer('discount');
             $table->string('reason_for_discount')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

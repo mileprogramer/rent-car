@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarController;
@@ -20,14 +21,23 @@ use App\Http\Controllers\StatisticController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+
+Route::get('users', [UserController::class, 'index']);
+
 Route::get('cars', [CarController::class, 'index']);
 Route::get('cars/filter', [CarController::class, 'filter']);
+Route::get('cars/available', [CarController::class, 'available']);
 Route::get('cars/deleted', [DeleteCarController::class, 'index']);
 Route::get('cars/rented', [RentedCarController::class, 'index']);
 Route::get('cars/statistics', [StatisticController::class, 'index']);
 Route::get('cars/broken', [BrokenCarController::class, 'index']);
 Route::get('/car/edit/{car}', [CarController::class, 'edit']);
 Route::get('/car/show/{car}', [CarController::class, 'edit']);
+Route::get('/car/search', [CarController::class, 'edit']);
 Route::get('/car/rent/details/{id}', [RentedCarController::class, 'details']);// add total_price
 
 Route::post('/car/add', [CarController::class, 'store']);

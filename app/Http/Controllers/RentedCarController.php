@@ -6,6 +6,8 @@ use App\Models\Car;
 use App\Models\RentedCar;
 use App\Models\Statistics;
 use App\Models\User;
+use App\Rules\ReasonForDiscount;
+use App\Rules\ReturnDate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use \Illuminate\Database\Eloquent\Collection;
@@ -26,15 +28,37 @@ class RentedCarController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate(RentedCar::rules($request->all()));
-        $car = Car::where('id', $data['car_id'])->firstOrFail();
-        $data['price_per_day'] = $car->price_per_day;
-        $rentedCar = RentedCar::create($data);
-        $data['created_at'] = $rentedCar['created_at'];
-        Statistics::create($data);
+        $rentCarRules = RentedCar::rules($request->all());
+        $rentCarData = [];
+        if(!isset($request->all()["user_id"])){
+            // new customer
+            $rentCarRules = array_merge($rentCarRules, User::rules());
+            unset($rentCarRules['user_id']);
+            $rentCarData = $request->validate($rentCarRules);
+            $user = User::insert([
+                "name" => $rentCarData['name'],
+                "phone" => $rentCarData['phone'],
+                "card_id" => $rentCarData['card_id'],
+            ]);
+            $rentCarData['user_id'] = $user->id;
+        }
+        if(empty($rentCarData))
+        {
+            $rentCarData = $request->validate($rentCarRules);
+        }
+        $car = Car::where('id', $rentCarData['car_id'])->firstOrFail();
+        $rentCarData['price_per_day'] = $car->price_per_day;
+        $rentedCar = RentedCar::create($rentCarData);
+        $rentCarData['created_at'] = $rentedCar['created_at'];
+        $rentCarData['wanted_return_date'] = $rentedCar['return_date'];
+
+        unset($rentCarData['return_date']);
+        Statistics::insert($rentCarData);
         $car->update(['status' => RentedCar::status()]);
 
-        return response()->json(['message'=> 'Successfully rented car'], 201);
+        return response()->json([
+            'message'=> 'Successfully rented car'
+        ], 201);
     }
 
     /**

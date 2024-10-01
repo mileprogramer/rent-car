@@ -12,11 +12,19 @@ use Illuminate\Pagination\Paginator;
 class CarController extends Controller
 {
     /**
-     * Display a listing of the cars
+     * Display a listing of all cars
      */
     public function index()
     {
         return response()->json($this->getCars());
+    }
+
+    /**
+     * Display a listing of all cars
+     */
+    public function available()
+    {
+        return response()->json(Car::where("status", Car::status())->paginate(Car::$carsPerPage));
     }
 
     /**

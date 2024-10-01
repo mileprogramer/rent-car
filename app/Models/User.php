@@ -32,6 +32,16 @@ class User extends Model
         'id' => 'integer',
     ];
 
+    public static function rules(array $requestData = []) :array
+    {
+        return [
+            "personal_data" => ["required", "max:255", "min:3", "string"],
+            "card_id" => ["required", "numeric"],
+            "phone_number" => ["required", "numeric"]
+        ];
+    }
+
+
     public function rentedCars(): HasMany
     {
         return $this->hasMany(RentedCars::class);
