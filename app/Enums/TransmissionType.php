@@ -8,7 +8,7 @@ enum TransmissionType :string
 {
     use EnumToArray;
  case Automatic = 'automatic';
- case Manuel = 'manual';
+ case Manual = 'manual';
  case SemiAutomatic = 'semi-automatic';
 
 }

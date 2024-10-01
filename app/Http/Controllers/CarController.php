@@ -60,9 +60,9 @@ class CarController extends Controller
     public function store(Request $request)
     {
         $car = $request->validate(Car::rules());
-        $createdCar = Car::create($car)->toArray();
+        Car::create($car);
 
-        return response()->json(['message'=> 'You successfully add new car', 'car' =>$createdCar], 201);
+        return response()->json(['message'=> 'You successfully add new car'], 201);
     }
 
     /**

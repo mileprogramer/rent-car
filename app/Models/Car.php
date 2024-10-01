@@ -53,17 +53,17 @@ class Car extends Model
     public static function rules() :array
     {
         return [
-            'license' => ['string' ,'min:4', 'max:8'],
-            'model' => ['string', 'min:3', 'max:20'],
-            'brand' => ['string', 'min:3', 'max:20'],
-            'year' => ['numeric','between:1950,'.date('Y')],
-            'price_per_day' => ['numeric', 'min:1'],
-            'transmission_type' => ['string', 'in:'. implode(',', TransmissionType::values())],
-            'air_conditioning_type' => ['string', 'in:'. implode(',', AirConditionerType::values())],
-            'status' => ['string', 'in:'. implode(',', CarStatus::values())],
-            'car_consumption' => ['numeric', 'min:1'],
-            'person_fit_in' => ['numeric', 'min:1'],
-            'number_of_doors' => ['numeric', 'min:1']
+            'license' => ['required', 'string' ,'min:4', 'max:8', "unique:cars"],
+            'model' => ['required', 'string', 'min:1', 'max:20'],
+            'brand' => ['required', 'string', 'min:1', 'max:20'],
+            'year' => ['required', 'numeric','between:1950,'.date('Y')],
+            'price_per_day' => ['required', 'numeric', 'min:1'],
+            'transmission_type' => ['required', 'string', 'in:'. implode(',', TransmissionType::values())],
+            'air_conditioning_type' => ['required', 'string', 'in:'. implode(',', AirConditionerType::values())],
+            'status' => ['required', 'string', 'in:'. implode(',', CarStatus::values())],
+            'car_consumption' => ['required', 'numeric', 'min:1'],
+            'person_fit_in' => ['required', 'numeric', 'min:1'],
+            'number_of_doors' => ['required', 'numeric', 'min:1']
         ];
     }
 
