@@ -79,16 +79,19 @@ class CarController extends Controller
     /**
      * Update the car data
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        $car = Car::findOrFail($id);
-        $carData = $request->validate(Car::rules());
+        $rules = Car::rules();
+        $rules["license"] = array_filter($rules, fn($rule) => $rule !==  "unique:cars");
+        $rules['id'] = ["required", "numeric"];
+
+        $carData = $request->validate($rules);
+        $car = Car::findOrFail($request->input("id"));
 
         $car->update($carData);
 
         return response()->json([
             'message'=> 'You successfully update car',
-            'car' =>$car
         ], 201);
     }
 

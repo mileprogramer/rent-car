@@ -41,7 +41,7 @@ Route::get('/car/search', [CarController::class, 'edit']);
 Route::get('/car/rent/details/{id}', [RentedCarController::class, 'details']);// add total_price
 
 Route::post('/car/add', [CarController::class, 'store']);
-Route::post('/car/update/{id}', [CarController::class, 'update']);
+Route::post('/car/update/', [CarController::class, 'update']);
 Route::post('/car/delete', [DeleteCarController::class, 'delete']);
 Route::post('/car/broke', [BrokenCarController::class, 'store']);
 Route::post('/car/broke/service', [BrokenCarController::class, 'goToService']);
