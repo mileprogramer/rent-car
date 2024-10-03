@@ -38,7 +38,11 @@ class DeleteCar extends Model
     protected function rules() :array
     {
         return [
-            'car_id' => ['required', 'exists:cars,id', 'unique:deleted_cars'],
+            'car_id' => ['required', 'unique:deleted_cars', function($attribute, $value, $fail){
+                $car = Car::where("id", $value)->firstOrFail();
+                if($car->status !== Car::status())
+                    $fail("Car can not be deleted if it is rented");
+            }],
             'reason_for_delete' => ['required' ,'string']
         ];
     }

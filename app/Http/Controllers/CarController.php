@@ -109,12 +109,7 @@ class CarController extends Controller
             ->paginate(Car::$carsPerPage);
 
         $cars->getCollection()->transform(function ($car) {
-            $car->available = $car->status === Car::status() ? true : false;
             $car->color = CarStatus::getColor($car->status);
-            if($car->status === RentedCar::status())
-            {
-                $car->returned_date = $car->rentedCar?->return_date;
-            }
             return $car;
         });
 
