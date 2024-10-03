@@ -11,6 +11,8 @@ use App\Rules\ReturnDate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use \Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Psy\Util\Json;
 
 class RentedCarController extends Controller
@@ -35,15 +37,20 @@ class RentedCarController extends Controller
             $rentCarRules = array_merge($rentCarRules, User::rules());
             unset($rentCarRules['user_id']);
             $rentCarData = $request->validate($rentCarRules);
-            $user = User::insert([
+            $user = User::create([
                 "name" => $rentCarData['name'],
                 "phone" => $rentCarData['phone'],
                 "card_id" => $rentCarData['card_id'],
+                "email" => $rentCarData['email'],
+                "password" => Hash::make("password"),
+                "remember_token" => Str::random(10)
             ]);
             $rentCarData['user_id'] = $user->id;
+            unset($rentCarData['name'], $rentCarData['phone'], $rentCarData['card_id'], $rentCarData['email']);
         }
         if(empty($rentCarData))
         {
+            // old customer
             $rentCarData = $request->validate($rentCarRules);
         }
         $car = Car::where('id', $rentCarData['car_id'])->firstOrFail();

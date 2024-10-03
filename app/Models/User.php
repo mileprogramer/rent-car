@@ -16,10 +16,11 @@ class User extends Model
      * @var array
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'id_card',
-        'phone_number',
+        "name",
+        "password",
+        "remember_token",
+        'card_id',
+        'phone',
         'email',
     ];
 
@@ -35,9 +36,10 @@ class User extends Model
     public static function rules(array $requestData = []) :array
     {
         return [
-            "personal_data" => ["required", "max:255", "min:3", "string"],
-            "card_id" => ["required", "numeric"],
-            "phone_number" => ["required", "numeric"]
+            "name" => ["required", "max:255", "min:3", "string"],
+            "card_id" => ["required", "numeric", "unique:users"],
+            "phone" => ["required", "unique:users"],
+            "email" => ["required", "email", "unique:users"],
         ];
     }
 

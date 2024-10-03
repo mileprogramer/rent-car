@@ -9,6 +9,6 @@ class StatisticController extends Controller
 {
     public function index()
     {
-        return response()->json(Statistics::with('extendedRents')->paginate());
+        return response()->json(Statistics::with('extendedRents', 'car', 'user')->paginate());
     }
 }
