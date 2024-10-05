@@ -27,8 +27,8 @@ class RentedCarsSeeder extends Seeder
             $rentedCars[] = [
                 'user_id' => $user->id,
                 'car_id' => $car->id,
-                'start_date' => now()->subDays(rand(1, 30))->toDateString(),
-                'return_date' => now()->addDays(rand(1, 30))->toDateString(),
+                'start_date' => now()->subDays(rand(1, 30)),
+                'return_date' => now()->addDays(rand(1, 30)),
                 'price_per_day' => $car->price_per_day,
                 'discount' => 0,
                 'reason_for_discount' => null,

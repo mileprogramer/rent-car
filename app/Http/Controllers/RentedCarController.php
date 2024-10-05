@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\ExtendRent;
 use App\Models\RentedCar;
 use App\Models\Statistics;
 use App\Models\User;
 use App\Rules\ReasonForDiscount;
 use App\Rules\ReturnDate;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use \Illuminate\Database\Eloquent\Collection;
@@ -60,7 +62,7 @@ class RentedCarController extends Controller
         $rentCarData['wanted_return_date'] = $rentedCar['return_date'];
 
         unset($rentCarData['return_date']);
-        Statistics::insert($rentCarData);
+        Statistics::create($rentCarData);
         $car->update(['status' => RentedCar::status()]);
 
         return response()->json([
@@ -76,10 +78,28 @@ class RentedCarController extends Controller
         if(isset($request->all()['car_id']))
         {
             $carId = $request->all()['car_id'];
+            $note = $request->all()['note'] ?? "";
 
             $rentedCar = RentedCar::where('car_id', $carId)->firstOrFail();
+            if (empty($note) && !$rentedCar->return_date->isSameDay(Carbon::today()) ) {
+                abort(429, ["note"=>'Note must be filled if the user is not returning the car at the date first wanted']);
+            }
+
             Car::where('id', $carId)->update(['status' => Car::status()]);
-            Statistics::update(['total_price' => $this->calculateTotalPrice()]);
+            $statistic = Statistics::where("car_id", $carId)->first();
+
+            if($statistic->extend_rent){
+                // take the last extend the rent and update the return date
+                ExtendRent::where("statistics_id", $statistic->id)
+                    ->where("return_date", $rentedCar->return_date)
+                    ->update(["return_date" => $rentedCar->return_date]);
+            }
+
+            $statistic->update([
+                'total_price' => $this->calculateTotalPrice($statistic),
+                'note' => $note,
+                "real_return_date" => Carbon::now()->format("Y-m-d")
+            ]);
             $rentedCar->delete();
 
             return response()->json([
@@ -112,6 +132,26 @@ class RentedCarController extends Controller
 
     protected function getRentedCars()
     {
-        return RentedCar::with(['user:id,name,phone,card_id,email', 'car:id,license', "extendedRents"])->paginate(RentedCar::$carsPerPage);
+        return RentedCar::with(['user:id,name,phone,card_id,email', 'car:id,license', "extendedRents"])
+            ->orderBy("created_at", "desc")
+            ->paginate(RentedCar::$carsPerPage);
+    }
+
+    protected function calculateTotalPrice(Statistics $statistic) :int
+    {
+        $totalPrice = 0;
+        if($statistic->extend_rent)
+        {
+            // go to the extent_rent for the records
+            // takes the price minus discount times days
+            // this do for each extend_rent
+            $statistic->extendedRents();
+        }
+        else
+        {
+            $startDate = Carbon::createFromFormat('d/m/Y', trim($statistic->start_date));
+            $totalPrice = $startDate->diffInDays(now()) * ($statistic->price_per_day - ($statistic->discount / 100) * $statistic->price_per_day);
+        }
+        return $totalPrice;
     }
 }

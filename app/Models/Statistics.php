@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\DateFormater;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Statistics extends Model
 {
-    use HasFactory;
+    use HasFactory, DateFormater;
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +23,8 @@ class Statistics extends Model
         'id_user',
         'id_car',
         'start_date',
-        'return_date',
+        'wanted_return_date',
+        'real_return_date',
         'price_per_day',
         'discount',
         'reason_for_discount',
@@ -41,8 +45,31 @@ class Statistics extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    // relationships
+    protected function startDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getDateFromFormat("d/m/Y", $value),
+            set: fn($value) => $this->formatDate($value)
+        );
+    }
 
+    protected function wantedReturnDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getDateFromFormat("d/m/Y", $value),
+            set: fn($value) => $this->formatDate($value)
+        );
+    }
+
+    protected function realReturnDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getDateFromFormat("d/m/Y", $value),
+            set: fn($value) => $this->formatDate($value)
+        );
+    }
+
+    // relationships
     public function rentedCars() :HasMany
     {
         return $this->hasMany(RentedCar::class, "car_id", "car_id");

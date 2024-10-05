@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Rules\ReasonForDiscount;
 use App\Rules\ReturnDate;
+use App\Traits\DateFormater;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RentedCar extends Model
 {
-    use HasFactory;
+    use HasFactory, DateFormater;
 
     /**
      * The attributes that are mass assignable.
@@ -69,6 +72,23 @@ class RentedCar extends Model
         ];
     }
 
+    protected function startDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getDateFromFormat("d/m/Y", $value),
+            set: fn($value) => $this->formatDate($value)
+        );
+    }
+
+    protected function returnDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getDateFromFormat("d/m/Y", $value),
+            set: fn($value) => $this->formatDate($value)
+        );
+    }
+
+    // relationships
     public function extendedRents()
     {
         return $this->hasManyThrough(

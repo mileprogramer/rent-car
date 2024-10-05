@@ -47,6 +47,6 @@ Route::post('/car/broke', [BrokenCarController::class, 'store']);
 Route::post('/car/broke/service', [BrokenCarController::class, 'goToService']);
 Route::post('/car/broke/fixed', [BrokenCarController::class, 'fixed']);
 Route::post('/car/rent', [RentedCarController::class, 'store']);
-Route::post('/car/rent/extend', [ExtenedRentController::class, 'store']);
+Route::post('/car/rent/extend', [ExtenedRentController::class, 'store']); // to do start_date is ex start_date plus one day
 Route::post('/car/rent/return', [RentedCarController::class, 'return']);// add total_price
 
