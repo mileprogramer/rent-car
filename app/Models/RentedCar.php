@@ -87,7 +87,6 @@ class RentedCar extends Model
             set: fn($value) => $this->formatDate($value)
         );
     }
-
     // relationships
     public function extendedRents()
     {
@@ -108,11 +107,11 @@ class RentedCar extends Model
     }
     public function car(): BelongsTo
     {
-        return $this->belongsTo(Car::class);
+        return $this->belongsTo(Car::class, "car_id", "id");
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, "user_id", "id");
     }
 }

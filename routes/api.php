@@ -37,7 +37,6 @@ Route::get('cars/statistics', [StatisticController::class, 'index']);
 Route::get('cars/broken', [BrokenCarController::class, 'index']);
 Route::get('/car/edit/{car}', [CarController::class, 'edit']);
 Route::get('/car/show/{car}', [CarController::class, 'edit']);
-Route::get('/car/search', [CarController::class, 'edit']);
 Route::get('/car/rent/details/{id}', [RentedCarController::class, 'details']);// add total_price
 
 Route::post('/car/add', [CarController::class, 'store']);
@@ -47,6 +46,6 @@ Route::post('/car/broke', [BrokenCarController::class, 'store']);
 Route::post('/car/broke/service', [BrokenCarController::class, 'goToService']);
 Route::post('/car/broke/fixed', [BrokenCarController::class, 'fixed']);
 Route::post('/car/rent', [RentedCarController::class, 'store']);
-Route::post('/car/rent/extend', [ExtenedRentController::class, 'store']); // to do start_date is ex start_date plus one day
+Route::post('/car/rent/extend', [ExtenedRentController::class, 'store']); // to do start_date is ex return_date plus one day
 Route::post('/car/rent/return', [RentedCarController::class, 'return']);// add total_price
 

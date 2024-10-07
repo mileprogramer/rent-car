@@ -14,16 +14,22 @@ class CarController extends Controller
     /**
      * Display a listing of all cars
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->query("search")){
+            return $this->search($request->query("search"));
+        }
         return response()->json($this->getCars());
     }
 
     /**
      * Display a listing of all cars
      */
-    public function available()
+    public function available(Request $request)
     {
+        if(($request->query("search"))){
+            return $this->search($request->query("search"), Car::status());
+        }
         return response()->json(Car::where("status", Car::status())->paginate(Car::$carsPerPage));
     }
 
@@ -95,11 +101,31 @@ class CarController extends Controller
         ], 201);
     }
 
-    public function edit(Car $car)
+    public function search(string $searchTerm, string $carStatus = "")
     {
-        return response()->json([
-            'car' => $car
-        ], 200);
+        if($carStatus === "")
+        {
+            // search for all cars
+            return response()->json(
+                $this->getCars(
+                    Car::query()
+                        ->where(function ($query) use ($searchTerm) {
+                            $query->where('brand', 'LIKE', '%' . $searchTerm . '%')
+                                ->orWhere('license', 'LIKE', '%' . $searchTerm . '%')
+                                ->orWhere('model', 'LIKE', '%' . $searchTerm . '%');
+                        })
+                ),
+            200);
+        }
+        return response()->json(
+            Car::where('status', $carStatus)
+                ->where(function ($query) use ($searchTerm) {
+                    $query->where('brand', 'LIKE', '%' . $searchTerm . '%')
+                        ->orWhere('license', 'LIKE', '%' . $searchTerm . '%')
+                        ->orWhere('model', 'LIKE', '%' . $searchTerm . '%');
+                })
+                ->paginate(Car::$carsPerPage),
+        200);
     }
 
     protected function getCars($query = null)

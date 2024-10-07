@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ExtendRent;
 use App\Models\RentedCar;
 use App\Models\Statistics;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ExtenedRentController extends Controller
@@ -16,24 +17,34 @@ class ExtenedRentController extends Controller
     */
     public static function store (Request $request)
     {
-        // here must be a check does extend rent already exists if yes then on the extend
-        // return date must be updated
+
         $data = $request->validate(ExtendRent::rules($request->all()));
         $rentedCar = RentedCar::with('inStatistics')
-            ->where("car_id", $data['car_id'])->firstOrFail();
-        // return date from the request must be set in the rented car
-        if(isset($rentedCar->inStatistics))
-        {
-            // does exists ExtendRent::where(statistics_id, ..., return_date, $rentedCar->return_date
-            $data['statistics_id'] = $rentedCar->inStatistics->id;
-            $data['start_date'] = // return_date from rented car plus one day
-            ExtendRent::create($data);
-            return response()->json([
-                'message' => "Successfully extended rent",
-            ]);
+            ->where("car_id", $data['car_id'])
+            ->firstOrFail();
+        $userReturnDate = Carbon::createFromFormat("d/m/Y", $data['return_date']);
+        $rentedCarReturnDate = Carbon::createFromFormat("d/m/Y", $rentedCar->return_date);
+
+        if ($userReturnDate->isBefore($rentedCarReturnDate)){
+            abort(429, ['message' => "Chosen return date must be after the before return date"]);
         }
+
+        Statistics::where("car_id", $rentedCar->car_id)
+            ->where("created_at", $rentedCar->created_at)
+            ->update(['extend_rent' => true]);
+        $rentedCar->update([
+            "return_date" => $userReturnDate->format("Y-m-d"),
+            "price_per_day" => $data['price_per_day'],
+        ]);
+
+        $data['user_id'] = $rentedCar->user_id;
+        $data['start_date'] = $rentedCarReturnDate->addDay();
+        $data['statistics_id'] = $rentedCar->inStatistics->id;
+
+        ExtendRent::create($data);
         return response()->json([
-            'message' => 'Mistake happened, you should contact support, The problem is this car is not in statistics'
-        ], 400);
+            'message' => "Successfully extended rent",
+        ]);
+
     }
 }

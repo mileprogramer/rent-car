@@ -16,15 +16,27 @@ use \Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Psy\Util\Json;
+use App\Repositoriums\RentedCarRepository;
 
 class RentedCarController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->query("search")){
+            return $this->search($request->query("search"));
+        }
         return response()->json($this->getRentedCars());
+    }
+
+    /**
+     * Search for cars.
+     */
+    public function search($searchTerm)
+    {
+        return response()->json(RentedCarRepository::search($searchTerm), 200);
     }
 
     /**
@@ -82,7 +94,7 @@ class RentedCarController extends Controller
 
             $rentedCar = RentedCar::where('car_id', $carId)->firstOrFail();
             if (empty($note) && !$rentedCar->return_date->isSameDay(Carbon::today()) ) {
-                abort(429, ["note"=>'Note must be filled if the user is not returning the car at the date first wanted']);
+                abort(422, ["note"=>'Note must be filled if the user is not returning the car at the date first wanted']);
             }
 
             Car::where('id', $carId)->update(['status' => Car::status()]);
@@ -104,7 +116,7 @@ class RentedCarController extends Controller
 
             return response()->json([
                 'message' => 'Successfully returned car',
-            ]);
+            ], 201);
         }
         return response()->json([
             'message' => 'Bad request',
@@ -130,10 +142,13 @@ class RentedCarController extends Controller
         ], 201);
     }
 
-    protected function getRentedCars()
+    protected function getRentedCars($query = null)
     {
-        return RentedCar::with(['user:id,name,phone,card_id,email', 'car:id,license', "extendedRents"])
-            ->orderBy("created_at", "desc")
+        if($query === null){
+            $query = RentedCar::query();
+        }
+        return $query->with(['user:id,name,phone,card_id,email', 'car:id,license', "extendedRents"])
+            ->orderBy("rented_cars.created_at", "desc")
             ->paginate(RentedCar::$carsPerPage);
     }
 
@@ -142,10 +157,12 @@ class RentedCarController extends Controller
         $totalPrice = 0;
         if($statistic->extend_rent)
         {
-            // go to the extent_rent for the records
-            // takes the price minus discount times days
-            // this do for each extend_rent
-            $statistic->extendedRents();
+            $extendedRents = $statistic->extendedRents;
+            foreach ($extendedRents as $extendedRent)
+            {
+                $startDate = Carbon::createFromFormat('d/m/Y', trim($extendedRent->start_date));
+                $totalPrice += $startDate->diffInDays(now()) * ($extendedRent->price_per_day - ($extendedRent->discount / 100) * $extendedRent->price_per_day);
+            }
         }
         else
         {

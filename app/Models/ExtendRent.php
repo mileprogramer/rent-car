@@ -48,14 +48,8 @@ class ExtendRent extends Model
     public static function rules($requestData) :array
     {
         return [
-            'user_id' => ['required', 'exists:users,id'],
             'car_id' => ['required', 'exists:statistics,car_id'],
-            'start_date' => ['required', 'date', function($attribute, $value, $fail) use($requestData){
-                $carStatsStartDate = Statistics::where('car_id', $requestData['car_id'])->pluck('start_date')->first();
-                if(strtotime($value) < strtotime($carStatsStartDate))
-                    $fail('Extend start date must be after initial start date');
-            }],
-            'return_date' => ['required', 'date', (new ReturnDate())->setData($requestData)],
+            'return_date' => ['required', 'date'],
             'price_per_day' => ['required', 'numeric', 'required'],
             'discount' => ['required', 'numeric', 'max:100', 'min:0'],
             'reason_for_discount' => (new ReasonForDiscount())->setData($requestData),
