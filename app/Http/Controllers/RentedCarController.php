@@ -147,7 +147,7 @@ class RentedCarController extends Controller
         if($query === null){
             $query = RentedCar::query();
         }
-        return $query->with(['user:id,name,phone,card_id,email', 'car:id,license', "extendedRents"])
+        return $query->with(['user:id,name,phone,card_id,email', 'car:id,license,images', "extendedRents"])
             ->orderBy("rented_cars.created_at", "desc")
             ->paginate(RentedCar::$carsPerPage);
     }

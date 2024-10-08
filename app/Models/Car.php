@@ -8,6 +8,7 @@ use App\Enums\TransmissionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Car extends Model
 {
@@ -30,6 +31,7 @@ class Car extends Model
         'car_consumption',
         'air_conditioning_type',
         'status',
+        'images',
     ];
 
     /**
@@ -65,6 +67,22 @@ class Car extends Model
             'person_fit_in' => ['required', 'numeric', 'min:1'],
             'number_of_doors' => ['required', 'numeric', 'min:1']
         ];
+    }
+
+    //
+    protected function images(): Attribute
+    {
+        return Attribute::make(
+            get: function(string $value) {
+                $allImages = json_decode($value);
+                foreach ($allImages as &$image)
+                {
+                    $imageName = $image;
+                    $image = env('APP_URL') . "/storage/cars-images/default" . $imageName;
+                }
+                return $allImages;
+            },
+        );
     }
 
     public function rentedCar(): HasOne
