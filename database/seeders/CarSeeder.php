@@ -848,8 +848,15 @@ class CarSeeder extends Seeder
                 'status' => 'available',
             ],
         ];
-
+        $this->addImages($cars);
         Car::insert($cars);
 
+    }
+
+    protected function addImages(&$cars){
+        foreach ($cars as &$car)
+        {
+            $car['images'] = json_encode(["car-front-1.jpg", "car-front-2.jpg", "car-front-4.jpg", "car-front-5.jpg"]);
+        }
     }
 }

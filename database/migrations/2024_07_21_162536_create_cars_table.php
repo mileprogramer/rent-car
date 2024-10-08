@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('car_consumption');
             $table->enum('air_conditioning_type', \App\Enums\AirConditionerType::values());
             $table->enum('status', \App\Enums\CarStatus::values());
+            $table->json("images");
             $table->timestamps();
         });
     }
