@@ -75,10 +75,22 @@ class Car extends Model
         return Attribute::make(
             get: function(string $value) {
                 $allImages = json_decode($value);
+                // this is only for now because i do not have the pictures for every car
+                if(empty($allImages))
+                {
+                    $defaultImages = ["car-front-1.jpg", "car-front-2.jpg", "car-front-4.jpg", "car-front-5.jpg"];
+                    foreach ($defaultImages as &$image)
+                    {
+                        $imageName = $image;
+                        $image = env('APP_URL') . "/storage/cars-images/default/" . $imageName;
+                    }
+                    return $defaultImages;
+                }
+                // this is the for the cars that have the images
                 foreach ($allImages as &$image)
                 {
                     $imageName = $image;
-                    $image = env('APP_URL') . "/storage/cars-images/default" . $imageName;
+                    $image = env('APP_URL') . "/storage/cars-images/". $this->id . $imageName;
                 }
                 return $allImages;
             },

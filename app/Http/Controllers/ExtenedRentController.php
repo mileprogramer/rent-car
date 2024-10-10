@@ -22,11 +22,11 @@ class ExtenedRentController extends Controller
         $rentedCar = RentedCar::with('inStatistics')
             ->where("car_id", $data['car_id'])
             ->firstOrFail();
-        $userReturnDate = Carbon::createFromFormat("d/m/Y", $data['return_date']);
+        $userReturnDate = Carbon::createFromFormat("Y-m-d", $data['return_date']);
         $rentedCarReturnDate = Carbon::createFromFormat("d/m/Y", $rentedCar->return_date);
 
         if ($userReturnDate->isBefore($rentedCarReturnDate)){
-            abort(429, ['message' => "Chosen return date must be after the before return date"]);
+            abort(429, ['message' => "Chosen return date must be after ex return date"]);
         }
 
         Statistics::where("car_id", $rentedCar->car_id)

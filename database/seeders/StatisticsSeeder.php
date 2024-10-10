@@ -34,8 +34,8 @@ class StatisticsSeeder extends Seeder
                 'price_per_day' => $cars[$i]->price_per_day,
                 'discount' => rand(0, 20),
                 'reason_for_discount' => $this->getRandomDiscountReason(),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $cars[$i]->created_at,
+                'updated_at' => $cars[$i]->updated_at,
             ];
         }
 

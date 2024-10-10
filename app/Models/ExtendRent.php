@@ -48,7 +48,7 @@ class ExtendRent extends Model
     public static function rules($requestData) :array
     {
         return [
-            'car_id' => ['required', 'exists:statistics,car_id'],
+            'car_id' => ['required', 'numeric'],
             'return_date' => ['required', 'date'],
             'price_per_day' => ['required', 'numeric', 'required'],
             'discount' => ['required', 'numeric', 'max:100', 'min:0'],
