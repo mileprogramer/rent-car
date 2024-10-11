@@ -80,6 +80,13 @@ class RentedCar extends Model
         );
     }
 
+    protected function startDateDefaultFormat(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getAttributes()['start_date'],
+        );
+    }
+
     protected function returnDate(): Attribute
     {
         return Attribute::make(
@@ -87,6 +94,14 @@ class RentedCar extends Model
             set: fn($value) => $this->formatDate($value)
         );
     }
+
+    protected function returnDateDefaultFormat(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getAttributes()['return_date'],
+        );
+    }
+
     // relationships
     public function extendedRents()
     {

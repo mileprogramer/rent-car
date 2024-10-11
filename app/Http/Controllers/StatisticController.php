@@ -34,7 +34,11 @@ class StatisticController extends Controller
 
         if ($request->query('name')) {
             $hasFilters = true;
-            $query->whereIn('user_id', User::where('name', 'like', '%' . $request->query('name') . '%')->pluck('id'));
+            $query->whereIn('user_id',
+                User::where('name', 'like', '%' . $request->query('name') . '%')
+                    ->orWhere('card_id', 'like', '%' . $request->query("name") . '%')
+                    ->orWhere('phone', 'like', '%' . $request->query("name") . '%')
+                    ->pluck('id'));
         }
 
         if ($request->query('license')) {

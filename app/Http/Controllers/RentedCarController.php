@@ -98,20 +98,22 @@ class RentedCarController extends Controller
             }
 
             Car::where('id', $carId)->update(['status' => Car::status()]);
-            $statistic = Statistics::where("car_id", $carId)->first();
+            $statistic = Statistics::where("car_id", $carId)
+                ->where("created_at", $rentedCar->created_at)
+                ->firstOrFail();
 
             if($statistic->extend_rent){
                 // take the last extend the rent and update the return date
                 ExtendRent::where("statistics_id", $statistic->id)
-                    ->where("return_date", $rentedCar->return_date)
-                    ->update(["return_date" => $rentedCar->return_date]);
+                    ->where("return_date", $rentedCar->return_date_default_format)
+                    ->update(["return_date" => Carbon::now()->format("Y-m-d")]);
             }
 
-            $statistic->update([
-                'total_price' => $this->calculateTotalPrice($statistic),
-                'note' => $note,
-                "real_return_date" => Carbon::now()->format("Y-m-d")
-            ]);
+            $statistic->real_return_date = Carbon::now()->format("Y-m-d");
+            $statistic->total_price = $this->calculateTotalPrice($statistic);
+            $statistic->note = $note;
+            $statistic->save();
+
             $rentedCar->delete();
 
             return response()->json([
@@ -160,7 +162,7 @@ class RentedCarController extends Controller
             $extendedRents = $statistic->extendedRents;
             foreach ($extendedRents as $extendedRent)
             {
-                $startDate = Carbon::createFromFormat('d/m/Y', trim($extendedRent->start_date));
+                $startDate = Carbon::createFromFormat('Y-m-d', trim($extendedRent->start_date));
                 $totalPrice += $startDate->diffInDays(now()) * ($extendedRent->price_per_day - ($extendedRent->discount / 100) * $extendedRent->price_per_day);
             }
         }
