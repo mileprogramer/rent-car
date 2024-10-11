@@ -82,7 +82,7 @@ class Statistics extends Model
 
     public function car(): BelongsTo
     {
-        return $this->belongsTo(Car::class);
+        return $this->belongsTo(Car::class, "car_id", "id");
     }
 
     public function user(): BelongsTo

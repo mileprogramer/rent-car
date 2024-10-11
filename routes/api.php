@@ -34,6 +34,7 @@ Route::get('cars/available', [CarController::class, 'available']);
 Route::get('cars/deleted', [DeleteCarController::class, 'index']);
 Route::get('cars/rented', [RentedCarController::class, 'index']);
 Route::get('cars/statistics', [StatisticController::class, 'index']);
+Route::get('cars/statistics/search', [StatisticController::class, 'search']);
 Route::get('cars/broken', [BrokenCarController::class, 'index']);
 Route::get('/car/edit/{car}', [CarController::class, 'edit']);
 Route::get('/car/show/{car}', [CarController::class, 'edit']);
