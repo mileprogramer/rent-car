@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Car;
+use App\Models\DeleteCar;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 15.5,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -39,7 +40,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.5,
                 'air_conditioning_type' => 'manual',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -52,7 +53,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.2,
                 'air_conditioning_type' => 'automatic',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -65,7 +66,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 4,
                 'car_consumption' => 10.5,
                 'air_conditioning_type' => 'electric',
-                'status' => 'deleted',
+                'status' => DeleteCar::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -78,7 +79,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 11.7,
                 'air_conditioning_type' => 'rear seat',
-                'status' => 'broken',
+                'status' => DeleteCar::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -91,7 +92,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 14.5,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -104,7 +105,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 16.0,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -117,7 +118,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 15.0,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -130,7 +131,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.5,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -143,7 +144,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.8,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -156,7 +157,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 11.2,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -169,7 +170,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.5,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -182,7 +183,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 10.5,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'broken',
+                'status' => DeleteCar::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -195,7 +196,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 11.9,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -208,7 +209,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.7,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -221,7 +222,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 10.8,
                 'air_conditioning_type' => 'manual',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -234,7 +235,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.3,
                 'air_conditioning_type' => 'automatic',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -247,7 +248,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 10.8,
                 'air_conditioning_type' => 'manual',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -260,7 +261,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 18.5,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -273,7 +274,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 14.2,
                 'air_conditioning_type' => 'automatic',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -286,7 +287,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 19.5,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -299,7 +300,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.0,
                 'air_conditioning_type' => 'manual',
-                'status' => 'broken',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -312,7 +313,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 16.0,
                 'air_conditioning_type' => 'rear seat',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -325,7 +326,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.5,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -338,7 +339,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 17.0,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -351,7 +352,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 15.0,
                 'air_conditioning_type' => 'automatic',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -364,7 +365,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.8,
                 'air_conditioning_type' => 'electric',
-                'status' => 'broken',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -377,7 +378,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 19.0,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -390,7 +391,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.5,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -403,7 +404,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 14.5,
                 'air_conditioning_type' => 'rear seat',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -416,7 +417,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 11.8,
                 'air_conditioning_type' => 'manual',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -429,7 +430,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.3,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -442,7 +443,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 17.0,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -455,7 +456,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 14.5,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -468,7 +469,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 17.2,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -481,7 +482,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 14.8,
                 'air_conditioning_type' => 'rear seat',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -494,7 +495,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 16.0,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -507,7 +508,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.5,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'rented',
+                'status' => DeleteCar::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -520,7 +521,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 14.5,
                 'air_conditioning_type' => 'rear seat',
-                'status' => 'broken',
+                'status' => DeleteCar::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -533,7 +534,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 11.8,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -546,7 +547,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 15.5,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -559,7 +560,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.3,
                 'air_conditioning_type' => 'manual',
-                'status' => 'deleted',
+                'status' => DeleteCar::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -572,7 +573,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.0,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -585,7 +586,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.7,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -598,7 +599,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 4,
                 'car_consumption' => 15.0,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -611,7 +612,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.5,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -624,7 +625,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 11.2,
                 'air_conditioning_type' => 'manual',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -637,7 +638,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 16.8,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -650,7 +651,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 14.9,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -663,7 +664,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 10.5,
                 'air_conditioning_type' => 'manual',
-                'status' => 'broken',
+                'status' => DeleteCar::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -676,7 +677,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.8,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -689,7 +690,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 15.3,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -702,7 +703,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.2,
                 'air_conditioning_type' => 'rear seat',
-                'status' => 'deleted',
+                'status' => DeleteCar::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -715,7 +716,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 11.7,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -728,7 +729,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 0, // Electric
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -741,7 +742,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 15.0,
                 'air_conditioning_type' => 'multi zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -754,7 +755,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 12.0,
                 'air_conditioning_type' => 'manual',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -767,7 +768,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 18.0,
                 'air_conditioning_type' => 'manual',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -780,7 +781,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 14.0,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -793,7 +794,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 16.5,
                 'air_conditioning_type' => 'manual',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -806,7 +807,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 13.8,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -819,7 +820,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 11.5,
                 'air_conditioning_type' => 'manual',
-                'status' => 'rented',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -832,7 +833,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 7,
                 'car_consumption' => 13.2,
                 'air_conditioning_type' => 'rear seat',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
             [
                 'license' => strtoupper(Str::random(7)),
@@ -845,7 +846,7 @@ class CarSeeder extends Seeder
                 'person_fit_in' => 5,
                 'car_consumption' => 17.0,
                 'air_conditioning_type' => 'dual zone',
-                'status' => 'available',
+                'status' => Car::status(),
             ],
         ];
         $this->addImages($cars);

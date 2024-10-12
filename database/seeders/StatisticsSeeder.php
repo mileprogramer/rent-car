@@ -23,14 +23,12 @@ class StatisticsSeeder extends Seeder
         $statistics = [];
 
         for ($i = 0; $i < $cars->count(); $i++) {
-            $user = $users->random();
-
             // Create a statistics record
             $statistics[] = [
-                'user_id' => $user->id,
+                'user_id' => $cars[$i]->user_id,
                 'car_id' => $cars[$i]->car_id,
-                'start_date' => now()->subDays(rand(1, 15))->toDateString(),
-                'wanted_return_date' => now()->addDays(rand(16, 30))->toDateString(),
+                'start_date' => $cars[$i]->start_date_default_format,
+                'wanted_return_date' => $cars[$i]->return_date_default_format,
                 'price_per_day' => $cars[$i]->price_per_day,
                 'discount' => rand(0, 20),
                 'reason_for_discount' => $this->getRandomDiscountReason(),
