@@ -16,6 +16,9 @@ class RentedCar extends Model
 {
     use HasFactory, DateFormater;
 
+
+    protected $appends = ['extended_rents'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -102,19 +105,20 @@ class RentedCar extends Model
         );
     }
 
-    // relationships
-    public function extendedRents()
+    public function getExtendedRentsAttribute()
     {
-        return $this->hasManyThrough(
-            ExtendRent::class,
-            Statistics::class,
-            'created_at',
-            'statistics_id',
-            'created_at',
-            'id'
-        );
+        $statistics = Statistics::where('created_at', $this->created_at)->first();
+
+        if ($statistics) {
+            return ExtendRent::where('car_id', $this->car_id)
+                ->where('statistics_id', $statistics->id)
+                ->get();
+        }
+
+        return collect();
     }
 
+    // relationships
     public function inStatistics() :HasOne
     {
         // custom relationships

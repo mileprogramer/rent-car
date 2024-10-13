@@ -82,6 +82,8 @@ class RentedCarController extends Controller
         ], 201);
     }
 
+    public $data = [];
+
     /**
      * When user returns car, remove the specified car
      */
@@ -93,12 +95,14 @@ class RentedCarController extends Controller
             $note = $request->all()['note'] ?? "";
 
             $rentedCar = RentedCar::where('car_id', $carId)->firstOrFail();
-            if (empty($note) && !$rentedCar->return_date->isSameDay(Carbon::today()) ) {
+            $rentedCarReturnDate = Carbon::createFromFormat("d/m/Y", $rentedCar->return_date);
+            if (empty($note) && $rentedCarReturnDate->isSameDay(Carbon::today()) ) {
                 abort(422, ["note"=>'Note must be filled if the user is not returning the car at the date first wanted']);
             }
 
             Car::where('id', $carId)->update(['status' => Car::status()]);
-            $statistic = Statistics::where("car_id", $carId)
+            $statistic = Statistics::with("extendedRents")
+                ->where("car_id", $carId)
                 ->where("created_at", $rentedCar->created_at)
                 ->firstOrFail();
 
@@ -110,8 +114,8 @@ class RentedCarController extends Controller
             }
 
             $statistic->real_return_date = Carbon::now()->format("Y-m-d");
-            $statistic->total_price = $this->calculateTotalPrice($statistic);
             $statistic->note = $note;
+            $statistic->total_price = $this->calculateTotalPrice($statistic, $rentedCarReturnDate);
             $statistic->save();
 
             $rentedCar->delete();
@@ -149,28 +153,68 @@ class RentedCarController extends Controller
         if($query === null){
             $query = RentedCar::query();
         }
-        return $query->with(['user:id,name,phone,card_id,email', 'car:id,license,images', "extendedRents"])
+        return $query->with(['user:id,name,phone,card_id,email', 'car:id,license,images'])
             ->orderBy("rented_cars.created_at", "desc")
             ->paginate(RentedCar::$carsPerPage);
     }
 
-    protected function calculateTotalPrice(Statistics $statistic) :int
+    protected function calculateTotalPrice($statistic, $initialReturnDate) :int
     {
-        $totalPrice = 0;
-        if($statistic->extend_rent)
-        {
-            $extendedRents = $statistic->extendedRents;
-            foreach ($extendedRents as $extendedRent)
-            {
-                $startDate = Carbon::createFromFormat('Y-m-d', trim($extendedRent->start_date));
-                $totalPrice += $startDate->diffInDays(now()) * ($extendedRent->price_per_day - ($extendedRent->discount / 100) * $extendedRent->price_per_day);
-            }
-        }
-        else
-        {
+        if(!$statistic->extend_rent){
             $startDate = Carbon::createFromFormat('d/m/Y', trim($statistic->start_date));
             $totalPrice = $startDate->diffInDays(now()) * ($statistic->price_per_day - ($statistic->discount / 100) * $statistic->price_per_day);
+            return $totalPrice;
         }
-        return $totalPrice;
+
+        if($statistic->extend_rent)
+        {
+            $initialStartDate = Carbon::createFromFormat('d/m/Y', trim($statistic->start_date));
+            $firstValue = $initialStartDate->diffInDays($initialReturnDate) * ($statistic->price_per_day - ($statistic->discount / 100) * $statistic->price_per_day);
+            $totalPrice = 0;
+            $extendedRents = $statistic->extendedRents;
+
+            $updatedExtendedRents = $extendedRents;
+
+            for ($i = $updatedExtendedRents->count() - 1; $i >= 0; $i--) {
+                $rent = $updatedExtendedRents[$i];
+
+                // Parse dates using Carbon
+                $returnDate = Carbon::createFromFormat('d/m/Y', $rent['return_date']);
+                $startDate = Carbon::createFromFormat('d/m/Y', $rent['start_date']);
+                $today = Carbon::now();
+
+                if ($returnDate->isAfter($today)) {
+                    // Update the return_date to today's date
+                    $updatedExtendedRents[$i]['return_date'] = $today->format('d/m/Y');
+                }
+
+                // Check if it's the last element and start_date is after today
+                if ($i === $updatedExtendedRents->count() - 1 && $startDate->isAfter($today)) {
+                    $updatedExtendedRents->pop();
+                }
+            }
+
+            foreach ($extendedRents as $extendedRent) {
+                // Parse the start and return dates
+                $startDate = Carbon::createFromFormat('d/m/Y', trim($extendedRent->start_date));
+                $returnDate = Carbon::createFromFormat('d/m/Y', trim($extendedRent->return_date));
+
+                // Calculate the total number of days
+                $totalDays = $returnDate->diffInDays($startDate);
+
+                // Calculate the total price based on price per day and total days
+                $totalPriceForRent = $extendedRent->price_per_day * $totalDays;
+
+                // Apply discount
+                $discountedPrice = $totalPriceForRent - ($totalPriceForRent * ($extendedRent->discount / 100));
+
+                // Accumulate the discounted price into the total price
+                $totalPrice += $discountedPrice;
+            }
+
+            return $totalPrice + $firstValue;
+
+        }
+        return 0;
     }
 }

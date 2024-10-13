@@ -4,14 +4,16 @@ namespace App\Models;
 
 use App\Rules\ReasonForDiscount;
 use App\Rules\ReturnDate;
+use App\Traits\DateFormater;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class ExtendRent extends Model
 {
-    use HasFactory;
+    use HasFactory, DateFormater;
     protected $table = 'extended_rents';
     /**
      * The attributes that are mass assignable.
@@ -55,7 +57,35 @@ class ExtendRent extends Model
             'reason_for_discount' => (new ReasonForDiscount())->setData($requestData),
         ];
     }
+    protected function startDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getDateFromFormat("d/m/Y", $value),
+            set: fn($value) => $this->formatDate($value)
+        );
+    }
 
+    protected function startDateDefaultFormat(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getAttributes()['start_date'],
+        );
+    }
+
+    protected function returnDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getDateFromFormat("d/m/Y", $value),
+            set: fn($value) => $this->formatDate($value)
+        );
+    }
+
+    protected function returnDateDefaultFormat(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getAttributes()['return_date'],
+        );
+    }
     // relationships
     public function car(): BelongsTo
     {
