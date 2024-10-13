@@ -17,7 +17,6 @@ class StatisticsSeeder extends Seeder
     public function run(): void
     {
         $cars = RentedCar::all();
-        $users = User::all();
 
         // Generate sample statistics records
         $statistics = [];
@@ -30,27 +29,13 @@ class StatisticsSeeder extends Seeder
                 'start_date' => $cars[$i]->start_date_default_format,
                 'wanted_return_date' => $cars[$i]->return_date_default_format,
                 'price_per_day' => $cars[$i]->price_per_day,
-                'discount' => rand(0, 20),
-                'reason_for_discount' => $this->getRandomDiscountReason(),
+                'discount' => $cars[$i]->discount,
+                'reason_for_discount' => $cars[$i]->reasonForDiscount,
                 'created_at' => $cars[$i]->created_at,
                 'updated_at' => $cars[$i]->updated_at,
             ];
         }
 
         Statistics::insert($statistics);
-    }
-
-    // Function to get a random reason for discount
-    private function getRandomDiscountReason()
-    {
-        $reasons = [
-            'Loyalty discount',
-            'Seasonal discount',
-            'Promotional discount',
-            'Referral discount',
-            'Holiday special',
-        ];
-
-        return $reasons[array_rand($reasons)];
     }
 }
