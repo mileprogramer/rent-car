@@ -7,15 +7,11 @@ use App\Models\ExtendRent;
 use App\Models\RentedCar;
 use App\Models\Statistics;
 use App\Models\User;
-use App\Rules\ReasonForDiscount;
-use App\Rules\ReturnDate;
+use App\Repositoriums\StatisticsCarRepository;
 use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use \Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Psy\Util\Json;
 use App\Repositoriums\RentedCarRepository;
 
 class RentedCarController extends Controller
@@ -82,8 +78,6 @@ class RentedCarController extends Controller
         ], 201);
     }
 
-    public $data = [];
-
     /**
      * When user returns car, remove the specified car
      */
@@ -130,22 +124,32 @@ class RentedCarController extends Controller
     }
 
     /**
-     * Show admin info about total price extend rent, start_date and return date
+     * Count rented cars
      */
-    public function details(Request $request) :JsonResponse
+    public function total(Request $request)
     {
-        $car = Statistics::with('extendedRents')
-            ->where('car_id', $request->route('id'))
-            ->firstOrFail();
+        if(!$request->has("month")){
+            return response()->json(["total_cars"=> RentedCar::count()]);
+        }
+        $totalCars = StatisticsCarRepository::rentByMonth();
+        if(empty($totalCars)){
+            return response()->json(["total_cars" => 0]);
+        }
+        return response()->json($totalCars[0]);
+    }
 
-        return response()->json([
-                'user_details' => User::where('id', $car->user_id)
-                                    ->select('name', 'phone', 'card_id')
-                                    ->first(),
-                'start_date' => $car->start_date,
-                'wanted_return_date' => $car->wanted_return_date,
-                'extendedRents' => $car->extendedRents,
-        ], 201);
+    /**
+     * Latest rented cars
+     */
+    public function latest()
+    {
+        return response()->json(
+            RentedCar::select(["start_date", "return_date", "price_per_day", "car_id"])
+                    ->with("car:id,images,license")
+                    ->orderBy("created_at", "desc")
+                    ->limit(RentedCar::$carsPerPage)
+                    ->get()
+        );
     }
 
     protected function getRentedCars($query = null)
@@ -184,7 +188,6 @@ class RentedCarController extends Controller
                 $today = Carbon::now();
 
                 if ($returnDate->isAfter($today)) {
-                    // Update the return_date to today's date
                     $updatedExtendedRents[$i]['return_date'] = $today->format('d/m/Y');
                 }
 
@@ -195,20 +198,12 @@ class RentedCarController extends Controller
             }
 
             foreach ($extendedRents as $extendedRent) {
-                // Parse the start and return dates
                 $startDate = Carbon::createFromFormat('d/m/Y', trim($extendedRent->start_date));
                 $returnDate = Carbon::createFromFormat('d/m/Y', trim($extendedRent->return_date));
 
-                // Calculate the total number of days
                 $totalDays = $returnDate->diffInDays($startDate);
-
-                // Calculate the total price based on price per day and total days
                 $totalPriceForRent = $extendedRent->price_per_day * $totalDays;
-
-                // Apply discount
                 $discountedPrice = $totalPriceForRent - ($totalPriceForRent * ($extendedRent->discount / 100));
-
-                // Accumulate the discounted price into the total price
                 $totalPrice += $discountedPrice;
             }
 

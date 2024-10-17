@@ -31,14 +31,18 @@ Route::get('users', [UserController::class, 'index']);
 Route::get('cars', [CarController::class, 'index']);
 Route::get('cars/filter', [CarController::class, 'filter']);
 Route::get('cars/available', [CarController::class, 'available']);
+Route::get('cars/available/total', [CarController::class, 'total']);
 Route::get('cars/deleted', [DeleteCarController::class, 'index']);
 Route::get('cars/rented', [RentedCarController::class, 'index']);
+Route::get('cars/rented/total', [RentedCarController::class, 'total']);
+Route::get('cars/rented/latest', [RentedCarController::class, 'latest']);
 Route::get('cars/statistics', [StatisticController::class, 'index']);
+Route::get('cars/returned/total', [StatisticController::class, 'returnedTotal']);
+Route::get('cars/returned/latest', [StatisticController::class, 'latest']);
 Route::get('cars/statistics/search', [StatisticController::class, 'search']);
-Route::get('cars/broken', [BrokenCarController::class, 'index']);
+Route::get('cars/best-selling', [StatisticController::class, 'bestSelling']);
 Route::get('/car/edit/{car}', [CarController::class, 'edit']);
 Route::get('/car/show/{car}', [CarController::class, 'edit']);
-Route::get('/car/rent/details/{id}', [RentedCarController::class, 'details']);// add total_price
 
 Route::post('/car/add', [CarController::class, 'store']);
 Route::post('/car/update/', [CarController::class, 'update']);

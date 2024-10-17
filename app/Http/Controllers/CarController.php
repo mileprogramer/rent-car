@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Enums\CarStatus;
 use App\Models\Car;
 use App\Models\RentedCar;
+use App\Repositoriums\StatisticsCarRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\DB;
 
 class CarController extends Controller
 {
@@ -72,15 +74,14 @@ class CarController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Count available cars
      */
-    public function show(Car $car)
+    public function total()
     {
         return response()->json([
-            'car' => $car
-        ], 200);
+            "total_cars" => Car::where("status", Car::status())->count()
+        ]);
     }
-
 
     /**
      * Update the car data
