@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        return response()->json(User::select("id", "name", "email", "phone", "card_id")->paginate());
+        return response()->json(User::select("id", "name", "email", "phone", "card_id")->paginate(User::$usersPerPage));
     }
 
     public function search(Request $request)
@@ -18,13 +18,13 @@ class UserController extends Controller
             User::select("id", "name", "email", "phone", "card_id")
                 ->where("name", "like" , "%" . $request->query("search_term") . "%")
                 ->orWhere("card_id", $request->query("search_term"))
-                ->paginate()
+                ->paginate(User::$usersPerPage)
         );
     }
 
     public function update(Request $request)
     {
-        $data = $request->validate(User::rules($request->all()));
+        $data = $request->validate(User::rulesEdit($request->all()));
 
         $user = User::where("id", $data['id'])->firstOrFail();
         $user->card_id = $data['card_id'];

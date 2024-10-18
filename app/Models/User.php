@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class User extends Model
@@ -35,7 +34,19 @@ class User extends Model
         'id' => 'integer',
     ];
 
+    public static $usersPerPage = 10;
+
     public static function rules(array $requestData = []) :array
+    {
+        return [
+            "name" => ["required", "max:255", "min:3", "string"],
+            "card_id" => ["required", "numeric", "unique:users"],
+            "phone" => ["required", "unique:users"],
+            "email" => ["required", "email", "unique:users"],
+        ];
+    }
+
+    public static function rulesEdit(array $requestData = []) :array
     {
         return [
             "id" => ["numeric"],
