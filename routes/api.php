@@ -27,6 +27,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('users', [UserController::class, 'index']);
+Route::get('users/search', [UserController::class, 'search']);
+
+Route::post('user/edit', [UserController::class, 'update']);
 
 Route::get('cars', [CarController::class, 'index']);
 Route::get('cars/filter', [CarController::class, 'filter']);
