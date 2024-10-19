@@ -7,12 +7,17 @@ use App\Enums\CarStatus;
 use App\Enums\TransmissionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Car extends Model
+class Car extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
+
 
     /**
      * The attributes that are mass assignable.
@@ -43,7 +48,7 @@ class Car extends Model
         'id' => 'integer',
     ];
 
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at', 'media'];
 
     public static function status() :string
     {
@@ -51,6 +56,7 @@ class Car extends Model
     }
 
     public static $carsPerPage = 10;
+    public static $acceptImageType = ["jpeg", "webp", "png", "jpg", "avif"];
 
     public static function rules() :array
     {
@@ -65,36 +71,35 @@ class Car extends Model
             'status' => ['required', 'string', 'in:'. implode(',', CarStatus::values())],
             'car_consumption' => ['required', 'numeric', 'min:1'],
             'person_fit_in' => ['required', 'numeric', 'min:1'],
-            'number_of_doors' => ['required', 'numeric', 'min:1']
+            'number_of_doors' => ['required', 'numeric', 'min:1'],
+            "images" => ['array'],
         ];
     }
 
-    //
-    protected function images(): Attribute
+    public function registerMediaColections()
+    {
+        $this->addMediaCollection('cars_images');
+    }
+
+    protected function imagesUrl(): Attribute
     {
         return Attribute::make(
-            get: function(string $value) {
-                $allImages = json_decode($value);
-                // this is only for now because i do not have the pictures for every car
-                if(empty($allImages))
+            get: function() {
+                $images = $this->getMedia("cars_images");
+                // makes urls
+                $urls = [];
+                foreach ($images as $image)
                 {
-                    $defaultImages = ["car-front-1.jpg", "car-front-2.jpg", "car-front-4.jpg", "car-front-5.jpg"];
-                    foreach ($defaultImages as &$image)
-                    {
-                        $imageName = $image;
-                        $image = env('APP_URL') . "/storage/cars-images/default/" . $imageName;
-                    }
-                    return $defaultImages;
+                    $urls[] = $image->getUrl();
                 }
-                // this is the for the cars that have the images
-                foreach ($allImages as &$image)
-                {
-                    $imageName = $image;
-                    $image = env('APP_URL') . "/storage/cars-images/". $this->id . $imageName;
-                }
-                return $allImages;
+                return $urls;
             },
         );
+    }
+
+    public function images() :HasMany
+    {
+        return $this->hasMany(Media::class, "model_id", "id");
     }
 
     public function rentedCar(): HasOne

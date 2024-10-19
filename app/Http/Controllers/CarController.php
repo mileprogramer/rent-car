@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Enums\CarStatus;
 use App\Models\Car;
 use App\Models\RentedCar;
-use App\Repositoriums\StatisticsCarRepository;
+use App\Repositoriums\StatisticsCarsRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class CarController extends Controller
 {
@@ -32,7 +33,7 @@ class CarController extends Controller
         if(($request->query("search"))){
             return $this->search($request->query("search"), Car::status());
         }
-        return response()->json(Car::where("status", Car::status())->paginate(Car::$carsPerPage));
+        return response()->json($this->getCars(Car::query()->where("status", Car::status())));
     }
 
     /**
@@ -67,8 +68,14 @@ class CarController extends Controller
      */
     public function store(Request $request)
     {
-        $car = $request->validate(Car::rules());
-        Car::create($car);
+        $carData = $request->validate(Car::rules());
+        if($request->hasFile("images") === false)
+            return response()->json(['message'=>"Images are required", "images"=> $request->all()["images"]], 422);
+
+        $car = Car::create($carData);
+        foreach ($request->file('images') as $image) {
+            $car->addMedia($image)->toMediaCollection('cars_images');
+        }
 
         return response()->json(['message'=> 'You successfully add new car'], 201);
     }
@@ -89,15 +96,28 @@ class CarController extends Controller
     public function update(Request $request)
     {
         $rules = Car::rules();
-        $rules["license"] = array_filter($rules, fn($rule) => $rule !==  "unique:cars");
+        $rules["license"] = Rule::unique("cars")->ignore($request->all()['id']);
         $rules['id'] = ["required", "numeric"];
 
         $carData = $request->validate($rules);
         $car = Car::findOrFail($request->input("id"));
 
+        if($request->hasFile("images"))
+        {
+            $car->clearMediaCollection('cars_images');
+
+            foreach ($request->file('images') as $image) {
+                $car->addMedia($image)->toMediaCollection('cars_images');
+            }
+        }
+
+        unset($carData['images']);
         $car->update($carData);
+        $updatedCar = $car;
+        $updatedCar->images = $car->imagesUrl;
 
         return response()->json([
+            'updatedCar' => $updatedCar,
             'message'=> 'You successfully update car',
         ], 201);
     }
@@ -141,6 +161,7 @@ class CarController extends Controller
         $cars->getCollection()->transform(function ($car) {
             $car->color = CarStatus::getColor($car->status);
             $car->last_time_updated = $car->updated_at !== $car->created_at ? $car->updated_at : null;
+            $car->images = $car->images_url;
             return $car;
         });
 

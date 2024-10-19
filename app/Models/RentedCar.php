@@ -16,7 +16,6 @@ class RentedCar extends Model
 {
     use HasFactory, DateFormater;
 
-
     protected $appends = ['extended_rents'];
 
     /**

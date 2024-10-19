@@ -61,4 +61,38 @@ class RentedCarRepository
         $data->setCollection($transformedData);
         return $data;
     }
+
+    static function getCars($query = null, $withImages = true, $paginate = true)
+    {
+        if($query === null){
+            $query = RentedCar::query();
+        }
+        $rentedCars = $query->with(['user:id,name,phone,card_id,email', 'car:id,license'])
+            ->orderBy("rented_cars.created_at", "desc");
+
+        if($paginate){
+            $rentedCars = $rentedCars->paginate(RentedCar::$carsPerPage);
+        }
+        else
+        {
+            $rentedCars = $rentedCars->get();
+        }
+
+        if($withImages === false){
+            return $rentedCars;
+        }
+
+        $rentedCars->transform(function($rentedCar){
+            if($rentedCar->car){
+                $rentedCar->car->images = $rentedCar->car->imagesUrl;
+            }
+            return $rentedCar;
+        });
+        return $rentedCars;
+    }
+
+    static function latest(){
+        return self::getCars(RentedCar::select(["start_date", "return_date", "price_per_day", "car_id", "user_id"])
+            ->limit(RentedCar::$carsPerPage), true, false);
+    }
 }

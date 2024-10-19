@@ -7,7 +7,7 @@ use App\Models\ExtendRent;
 use App\Models\RentedCar;
 use App\Models\Statistics;
 use App\Models\User;
-use App\Repositoriums\StatisticsCarRepository;
+use App\Repositoriums\StatisticsCarsRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -24,7 +24,7 @@ class RentedCarController extends Controller
         if($request->query("search")){
             return $this->search($request->query("search"));
         }
-        return response()->json($this->getRentedCars());
+        return response()->json(RentedCarRepository::getCars());
     }
 
     /**
@@ -131,7 +131,7 @@ class RentedCarController extends Controller
         if(!$request->has("month")){
             return response()->json(["total_cars"=> RentedCar::count()]);
         }
-        $totalCars = StatisticsCarRepository::rentByMonth();
+        $totalCars = StatisticsCarsRepository::rentByMonth();
         if(empty($totalCars)){
             return response()->json(["total_cars" => 0]);
         }
@@ -143,23 +143,7 @@ class RentedCarController extends Controller
      */
     public function latest()
     {
-        return response()->json(
-            RentedCar::select(["start_date", "return_date", "price_per_day", "car_id"])
-                    ->with("car:id,images,license")
-                    ->orderBy("created_at", "desc")
-                    ->limit(RentedCar::$carsPerPage)
-                    ->get()
-        );
-    }
-
-    protected function getRentedCars($query = null)
-    {
-        if($query === null){
-            $query = RentedCar::query();
-        }
-        return $query->with(['user:id,name,phone,card_id,email', 'car:id,license,images'])
-            ->orderBy("rented_cars.created_at", "desc")
-            ->paginate(RentedCar::$carsPerPage);
+        return response()->json(RentedCarRepository::latest());
     }
 
     protected function calculateTotalPrice($statistic, $initialReturnDate) :int

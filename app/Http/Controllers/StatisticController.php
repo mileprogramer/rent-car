@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Models\Statistics;
 use App\Models\User;
-use App\Repositoriums\StatisticsCarRepository;
+use App\Repositoriums\StatisticsCarsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,9 +13,11 @@ class StatisticController extends Controller
 {
     public function index()
     {
-        return response()->json(Statistics::with('extendedRents', 'car', 'user')
-            ->orderBy("updated_at", "desc")
-            ->paginate(Car::$carsPerPage));
+        return response()->json(StatisticsCarsRepository::getStats(
+            Statistics::with('extendedRents', 'car', 'user')
+                ->orderBy("updated_at", "desc")
+            , false, true)
+        );
     }
 
     public function search(Request $request)
@@ -67,7 +69,7 @@ class StatisticController extends Controller
     public function returnedTotal(Request $request)
     {
         if($request->has("month")){
-            $totalCars = StatisticsCarRepository::returnedByMonth();
+            $totalCars = StatisticsCarsRepository::returnedByMonth();
             if(empty($totalCars))
                 return response()->json(["total_cars"=> 0]);
 
@@ -75,7 +77,7 @@ class StatisticController extends Controller
         }
 
         if($request->has("year")){
-            $totalCars = StatisticsCarRepository::returnedByYear();
+            $totalCars = StatisticsCarsRepository::returnedByYear();
             if(empty($totalCars))
                 return response()->json(["total_cars" => 0]);
             return response()->json($totalCars[0]);
@@ -101,12 +103,12 @@ class StatisticController extends Controller
     public function latest()
     {
         return response()->json(
-            Statistics::select(["start_date", "real_return_date", "total_price", "note" ,"car_id"])
-                ->with("car:id,images,license")
-                ->whereNotNull("real_return_date")
-                ->orderBy("real_return_date", "desc")
-                ->limit(Car::$carsPerPage)
-                ->get()
+            StatisticsCarsRepository::getStats(
+                Statistics::select(["start_date", "real_return_date", "total_price", "note" ,"car_id"])
+                    ->with("car:id,license")
+                    ->whereNotNull("real_return_date")
+                    ->orderBy("updated_at", "desc")
+                    ->limit(Car::$carsPerPage), true, false)
         );
     }
 }

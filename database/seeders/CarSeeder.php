@@ -770,95 +770,16 @@ class CarSeeder extends Seeder
                 'air_conditioning_type' => 'manual',
                 'status' => Car::status(),
             ],
-            [
-                'license' => strtoupper(Str::random(7)),
-                'model' => 'A6',
-                'brand' => 'Audi',
-                'year' => 2019,
-                'price_per_day' => 130.00,
-                'transmission_type' => 'automatic',
-                'number_of_doors' => 4,
-                'person_fit_in' => 5,
-                'car_consumption' => 14.0,
-                'air_conditioning_type' => 'dual zone',
-                'status' => Car::status(),
-            ],
-            [
-                'license' => strtoupper(Str::random(7)),
-                'model' => 'Wrangler',
-                'brand' => 'Jeep',
-                'year' => 2018,
-                'price_per_day' => 120.00,
-                'transmission_type' => 'manual',
-                'number_of_doors' => 4,
-                'person_fit_in' => 5,
-                'car_consumption' => 16.5,
-                'air_conditioning_type' => 'manual',
-                'status' => Car::status(),
-            ],
-            [
-                'license' => strtoupper(Str::random(7)),
-                'model' => '3 Series',
-                'brand' => 'BMW',
-                'year' => 2022,
-                'price_per_day' => 175.00,
-                'transmission_type' => 'automatic',
-                'number_of_doors' => 4,
-                'person_fit_in' => 5,
-                'car_consumption' => 13.8,
-                'air_conditioning_type' => 'dual zone',
-                'status' => Car::status(),
-            ],
-            [
-                'license' => strtoupper(Str::random(7)),
-                'model' => 'CX-5',
-                'brand' => 'Mazda',
-                'year' => 2020,
-                'price_per_day' => 115.00,
-                'transmission_type' => 'automatic',
-                'number_of_doors' => 5,
-                'person_fit_in' => 5,
-                'car_consumption' => 11.5,
-                'air_conditioning_type' => 'manual',
-                'status' => Car::status(),
-            ],
-            [
-                'license' => strtoupper(Str::random(7)),
-                'model' => 'Outlander',
-                'brand' => 'Mitsubishi',
-                'year' => 2021,
-                'price_per_day' => 130.00,
-                'transmission_type' => 'automatic',
-                'number_of_doors' => 5,
-                'person_fit_in' => 7,
-                'car_consumption' => 13.2,
-                'air_conditioning_type' => 'rear seat',
-                'status' => Car::status(),
-            ],
-            [
-                'license' => strtoupper(Str::random(7)),
-                'model' => 'Charger',
-                'brand' => 'Dodge',
-                'year' => 2022,
-                'price_per_day' => 160.00,
-                'transmission_type' => 'automatic',
-                'number_of_doors' => 4,
-                'person_fit_in' => 5,
-                'car_consumption' => 17.0,
-                'air_conditioning_type' => 'dual zone',
-                'status' => Car::status(),
-            ],
         ];
-        $this->addImages($cars);
         Car::insert($cars);
+        $this->addImages(Car::all());
 
     }
 
-    protected function addImages(&$cars){
+    protected function addImages($cars){
         foreach ($cars as &$car)
         {
-            // this is for now until i find the the images
-            $car['images'] = json_encode([]);
+            $car->copyMedia(storage_path("app/public/cars-images/default/car-front-5.jpg"))->toMediaCollection("cars_images");
         }
     }
 }

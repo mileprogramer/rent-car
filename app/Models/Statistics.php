@@ -45,6 +45,7 @@ class Statistics extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
+    public static int $perPageStat = 10;
 
     protected function startDate(): Attribute
     {
