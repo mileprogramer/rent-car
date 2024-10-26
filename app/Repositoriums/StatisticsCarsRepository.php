@@ -7,6 +7,22 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticsCarsRepository
 {
+
+//    static function getStats(array $columns, array $relations, $aditionalQuery, bool $paginate = true, bool $withCarImages = false)
+//    {
+//        $query = Statistics::query();
+//        if(!empty($columns))
+//            $query->select($columns);
+//
+//        if($withCarImages)
+//            $relations[] = ["car.images"];
+//
+//        if(!empty($relations))
+//            $query->with($relations);
+//
+//        return $paginate ? $query->paginate() : $query->get();
+//    }
+
     static function getStats($query = null, bool $withImages, bool $pagiante)
     {
         if($query === null){

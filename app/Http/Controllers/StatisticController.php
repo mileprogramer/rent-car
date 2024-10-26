@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Handlers\StatisticsHandler;
 use App\Models\Car;
 use App\Models\Statistics;
 use App\Models\User;
@@ -11,55 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
-    public function index()
+    public function index(StatisticsHandler $statisticsHandler)
     {
-        return response()->json(StatisticsCarsRepository::getStats(
-            Statistics::with('extendedRents', 'car', 'user')
-                ->orderBy("updated_at", "desc")
-            , false, true)
-        );
+        return response()->json($statisticsHandler->getStats(), 200);
     }
 
-    public function search(Request $request)
+    public function search(Request $request, StatisticsHandler $statisticsHandler)
     {
-        $query = Statistics::query();
-
-        if ($request->query('start_date')) {
-            $query->where('start_date', ">" ,$request->query('start_date'));
-        }
-
-        if ($request->query('end_date')) {
-            $query->where('wanted_return_date', "<" ,$request->query('end_date'));
-        }
-
-        if ($request->query('name')) {
-            $query->whereIn('user_id',
-                User::where('name', 'like', '%' . $request->query('name') . '%')
-                    ->orWhere('card_id', 'like', '%' . $request->query("name") . '%')
-                    ->orWhere('phone', 'like', '%' . $request->query("name") . '%')
-                    ->pluck('id'));
-        }
-
-        if ($request->query('license')) {
-            $query = $query->where('car_id',  Car::where('license', $request->query('license'))->value('id'));
-        }
-
-        if ($request->query('extend_rent')) {
-            $request->query('extend_rent') === "true" ?
-                $query->where('extend_rent', 1) :
-                $query->where('extend_rent', 0);
-        }
-
-        if ($request->query('returned_car')) {
-            $request->query('returned_car') === "true" ?
-                $query->whereNotNull('real_return_date') :
-                $query->whereNull('real_return_date');
-        }
-
         return response()->json(
-            $query->orderBy("created_at", "desc")
-                ->with(['car:id,license', 'user:id,name,phone,card_id'])
-                ->paginate()
+            $statisticsHandler->search($request)
         );
     }
 
