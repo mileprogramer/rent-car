@@ -5,8 +5,10 @@ namespace App\Handlers;
 use App\Models\Car;
 use App\Models\Statistics;
 use App\Models\User;
+use App\Repository\StatisticsCarsRepository;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class StatisticsHandler
 {
@@ -20,7 +22,7 @@ class StatisticsHandler
     {
         return Statistics::with('extendedRents', 'car', 'user')
             ->orderBy("updated_at", "desc")
-            ->paginate();
+            ->paginate(Statistics::$perPageStat);
     }
 
     public function search(Request $request) :LengthAwarePaginator
@@ -52,7 +54,30 @@ class StatisticsHandler
         }
         return $query->orderBy("created_at", "desc")
             ->with(['car:id,license', 'user:id,name,phone,card_id'])
-            ->paginate();
+            ->paginate(Statistics::$perPageStat);
+    }
+
+    public function returnedTotal(Request $request) :array
+    {
+        if($request->has("month")){
+            $totalCars = StatisticsCarsRepository::returnedByMonth();
+            if(empty($totalCars))
+                return ["total_cars" => 0];
+
+            return ["total_cars" => $totalCars[0]->total_cars];
+        }
+
+        return [];
+    }
+
+    public function latestReturnedCars() :Collection|LengthAwarePaginator
+    {
+        return StatisticsCarsRepository::getStatsWithCarImages(
+            Statistics::select(["start_date", "real_return_date", "total_price", "note" ,"car_id"])
+                ->with("car:id,license", "car.media")
+                ->whereNotNull("real_return_date")
+                ->orderBy("updated_at", "desc")
+                ->limit(Car::$carsPerPage), true);
     }
 
 }

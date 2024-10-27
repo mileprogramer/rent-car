@@ -7,12 +7,12 @@ use App\Models\ExtendRent;
 use App\Models\RentedCar;
 use App\Models\Statistics;
 use App\Models\User;
-use App\Repositoriums\StatisticsCarsRepository;
+use App\Repository\StatisticsCarsRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Repositoriums\RentedCarRepository;
+use App\Repository\RentedCarRepository;
 
 class RentedCarController extends Controller
 {

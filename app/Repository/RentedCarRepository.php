@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\Repositoriums;
+namespace app\Repository;
 
 use App\Models\RentedCar;
 

@@ -6,7 +6,7 @@ use App\Handlers\StatisticsHandler;
 use App\Models\Car;
 use App\Models\Statistics;
 use App\Models\User;
-use App\Repositoriums\StatisticsCarsRepository;
+use App\Repository\StatisticsCarsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +14,7 @@ class StatisticController extends Controller
 {
     public function index(StatisticsHandler $statisticsHandler)
     {
-        return response()->json($statisticsHandler->getStats(), 200);
+        return response()->json($statisticsHandler->getStats());
     }
 
     public function search(Request $request, StatisticsHandler $statisticsHandler)
@@ -25,29 +25,17 @@ class StatisticController extends Controller
     }
 
     /**
-     * Count returned cars this (month, year...)
+     * Count returned cars this month
      */
-    public function returnedTotal(Request $request)
+    public function returnedTotal(Request $request, StatisticsHandler $statisticsHandler)
     {
-        if($request->has("month")){
-            $totalCars = StatisticsCarsRepository::returnedByMonth();
-            if(empty($totalCars))
-                return response()->json(["total_cars"=> 0]);
-
-            return response()->json($totalCars[0]);
-        }
-
-        if($request->has("year")){
-            $totalCars = StatisticsCarsRepository::returnedByYear();
-            if(empty($totalCars))
-                return response()->json(["total_cars" => 0]);
-            return response()->json($totalCars[0]);
-        }
-        return response()->json([]);
+        return response()->json(
+            $statisticsHandler->returnedTotal($request)
+        );
     }
 
     /**
-     * Best selling cars
+     * Best selling cars TO DO
      */
     public function bestSelling(Request $request)
     {
@@ -61,15 +49,10 @@ class StatisticController extends Controller
         return response()->json($results);
     }
 
-    public function latest()
+    public function latest(StatisticsHandler $statisticsHandler)
     {
         return response()->json(
-            StatisticsCarsRepository::getStats(
-                Statistics::select(["start_date", "real_return_date", "total_price", "note" ,"car_id"])
-                    ->with("car:id,license")
-                    ->whereNotNull("real_return_date")
-                    ->orderBy("updated_at", "desc")
-                    ->limit(Car::$carsPerPage), true, false)
+            $statisticsHandler->latestReturnedCars()
         );
     }
 }

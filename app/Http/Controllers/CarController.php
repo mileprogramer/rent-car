@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\CarStatus;
 use App\Models\Car;
 use App\Models\RentedCar;
-use App\Repositoriums\StatisticsCarsRepository;
+use App\Repository\StatisticsCarsRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;

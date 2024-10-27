@@ -76,7 +76,7 @@ class Car extends Model implements HasMedia
         ];
     }
 
-    public function registerMediaColections()
+    public function registerMediaCollections(): void
     {
         $this->addMediaCollection('cars_images');
     }
@@ -97,10 +97,10 @@ class Car extends Model implements HasMedia
         );
     }
 
-    public function images() :HasMany
-    {
-        return $this->hasMany(Media::class, "model_id", "id");
-    }
+//    public function images() :HasMany
+//    {
+//        return $this->hasMany(Media::class, "model_id", "id");
+//    }
 
     public function rentedCar(): HasOne
     {
