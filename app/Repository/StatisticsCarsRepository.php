@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Models\Statistics;
+use App\Service\CarService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -15,10 +16,8 @@ class StatisticsCarsRepository
         $stats = $paginate ? $query->paginate(Statistics::$perPageStat) : $query->get();
 
         return $stats->transform(function ($record) {
-            if ($record->car && $record->car?->media) {
-                $record->car->images = $record->car->media->map(function ($media) {
-                    return $media->getUrl();
-                });
+            if ($record->car) {
+                $record->car->images = CarService::getImagesForCar($record->car);
             }
             return $record;
         });

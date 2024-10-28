@@ -50,6 +50,7 @@ Route::post('/car/delete', [DeleteCarController::class, 'delete']);
 
 // Rented cars get
 Route::get('cars/rented', [RentedCarController::class, 'index']);
+Route::get('cars/rented/search', [RentedCarController::class, 'search']);
 Route::get('cars/rented/total', [RentedCarController::class, 'total']);
 Route::get('cars/rented/latest', [RentedCarController::class, 'latest']);
 

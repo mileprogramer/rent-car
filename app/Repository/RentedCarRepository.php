@@ -4,6 +4,11 @@
 namespace app\Repository;
 
 use App\Models\RentedCar;
+use App\Models\Statistics;
+use App\Service\CarService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class RentedCarRepository
 {
@@ -62,37 +67,20 @@ class RentedCarRepository
         return $data;
     }
 
-    static function getCars($query = null, $withImages = true, $paginate = true)
+    static function getCarsWithImages(Builder $query, bool $paginate = true) : Collection|LengthAwarePaginator
     {
-        if($query === null){
-            $query = RentedCar::query();
-        }
-        $rentedCars = $query->with(['user:id,name,phone,card_id,email', 'car:id,license'])
-            ->orderBy("rented_cars.created_at", "desc");
+        $rentedCars = $paginate ? $query->paginate(RentedCar::$carsPerPage) : $query->get();
 
-        if($paginate){
-            $rentedCars = $rentedCars->paginate(RentedCar::$carsPerPage);
-        }
-        else
-        {
-            $rentedCars = $rentedCars->get();
-        }
-
-        if($withImages === false){
-            return $rentedCars;
-        }
-
-        $rentedCars->transform(function($rentedCar){
-            if($rentedCar->car){
-                $rentedCar->car->images = $rentedCar->car->imagesUrl;
+        return $rentedCars->transform(function ($record) {
+            if ($record->car) {
+                $record->car->images = CarService::getImagesForCar($record->car);
             }
-            return $rentedCar;
+            return $record;
         });
-        return $rentedCars;
     }
 
     static function latest(){
-        return self::getCars(RentedCar::select(["start_date", "return_date", "price_per_day", "car_id", "user_id"])
-            ->limit(RentedCar::$carsPerPage), true, false);
+        return self::getCarsWithImages(RentedCar::select(["start_date", "return_date", "price_per_day", "car_id", "user_id"])
+            ->limit(RentedCar::$carsPerPage));
     }
 }

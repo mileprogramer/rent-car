@@ -22,7 +22,6 @@ class ExtenedRentController extends Controller
             ->where("car_id", $data['car_id'])
             ->firstOrFail();
         $userReturnDate = Carbon::createFromFormat("Y-m-d", $data['return_date']);
-        $rentedCarReturnDate = Carbon::createFromFormat("d/m/Y", $rentedCar->return_date);
 
         if ($userReturnDate->isBefore($data['return_date'])){
             abort(429, ['message' => "Chosen return date must be after ex return date"]);
