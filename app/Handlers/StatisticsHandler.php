@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Statistics;
 use App\Models\User;
 use App\Repository\StatisticsCarsRepository;
+use App\Service\CarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -72,12 +73,11 @@ class StatisticsHandler
 
     public function latestReturnedCars() :Collection|LengthAwarePaginator
     {
-        return StatisticsCarsRepository::getStatsWithCarImages(
+        return CarService::getCarsWithImages(
             Statistics::select(["start_date", "real_return_date", "total_price", "note" ,"car_id"])
                 ->with("car:id,license", "car.media")
                 ->whereNotNull("real_return_date")
-                ->orderBy("updated_at", "desc")
-                ->limit(Car::$carsPerPage), true);
+                ->orderBy("updated_at", "desc"));
     }
 
 }

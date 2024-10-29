@@ -10,19 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticsCarsRepository
 {
-
-    static function getStatsWithCarImages(Builder $query, bool $paginate)
-    {
-        $stats = $paginate ? $query->paginate(Statistics::$perPageStat) : $query->get();
-
-        return $stats->transform(function ($record) {
-            if ($record->car) {
-                $record->car->images = CarService::getImagesForCar($record->car);
-            }
-            return $record;
-        });
-    }
-
     static function rentByMonth()
     {
         return DB::select("

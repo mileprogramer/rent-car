@@ -40,7 +40,7 @@ class RentedCarController extends Controller
      */
     public function search(Request $request) : JsonResponse
     {
-        return response()->json($this->rentedCarHandler->search($request->query("search")), 200);
+        return response()->json($this->rentedCarHandler->search($request->query("term")), 200);
     }
 
     /**

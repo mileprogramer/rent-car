@@ -34,8 +34,10 @@ Route::post('user/edit', [UserController::class, 'update']);
 
 // Cars get
 Route::get('cars', [CarController::class, 'index']);
+Route::get('cars/search', [CarController::class, 'search']);
 Route::get('cars/filter', [CarController::class, 'filter']);
 Route::get('cars/available', [CarController::class, 'available']);
+Route::get('cars/available/search', [CarController::class, 'searchAvailable']);
 Route::get('cars/available/total', [CarController::class, 'total']);
 
 // Cars post

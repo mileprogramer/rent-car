@@ -149,7 +149,9 @@ class RentedCarHandler
 
     public function latestRented() :LengthAwarePaginator|Collection
     {
-        return RentedCarRepository::latest();
+        return CarService::getCarsWithImages(
+            RentedCar::select(["start_date", "return_date", "price_per_day", "car_id", "user_id"])
+        );
     }
 
 }

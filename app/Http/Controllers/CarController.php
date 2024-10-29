@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Enums\CarStatus;
+use App\Handlers\CarHandler;
 use App\Models\Car;
 use App\Models\RentedCar;
 use App\Repository\StatisticsCarsRepository;
+use App\Service\CarService;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -17,154 +20,74 @@ class CarController extends Controller
     /**
      * Display a listing of all cars
      */
-    public function index(Request $request)
+    public function index() :JsonResponse
     {
-        if($request->query("search")){
-            return $this->search($request->query("search"));
-        }
-        return response()->json($this->getCars());
+        return response()->json(CarHandler::getAllCars());
     }
 
     /**
-     * Display a listing of all cars
+     * Display a listing of available cars
      */
-    public function available(Request $request)
+    public function available() :JsonResponse
     {
-        if(($request->query("search"))){
-            return $this->search($request->query("search"), Car::status());
+        return response()->json(CarHandler::getAvailableCars());
+    }
+
+    /**
+     * Search available cars
+     */
+    public function searchAvailable(Request $request) :JsonResponse
+    {
+        if(($request->query("term"))){
+            return response()->json(CarHandler::searchAvailableCars($request->query("term")));
         }
-        return response()->json($this->getCars(Car::query()->where("status", Car::status())));
+        return response()->json([]);
     }
 
     /**
      * Show the cars that have these filters
      */
-    public function filter(Request $request)
+    public function filter(Request $request) :JsonResponse
     {
-        $query = Car::query();
-        $columnsFilter = [
-            "air_conditioning_type",
-            "status",
-            "transmission_type",
-            "model",
-            "brand",
-            "person_fit_in",
-            "year",
-            "car_consumption"
-        ];
-
-        foreach ($columnsFilter as $column)
-        {
-            if($request->query($column))
-            {
-                $query->where($column, $request->query($column));
-            }
-        }
-        return response()->json($this->getCars($query), 200);
+        return response()->json(CarHandler::filterCars($request));
     }
 
     /**
      * Store a new car
      */
-    public function store(Request $request)
+    public function store(Request $request) :JsonResponse
     {
-        $carData = $request->validate(Car::rules());
-        if($request->hasFile("images") === false)
-            return response()->json(['message'=>"Images are required", "images"=> $request->all()["images"]], 422);
-
-        $car = Car::create($carData);
-        foreach ($request->file('images') as $image) {
-            $car->addMedia($image)->toMediaCollection('cars_images');
-        }
-
-        return response()->json(['message'=> 'You successfully add new car'], 201);
+        $result = CarHandler::createNewCar($request);
+        return response()->json(['message'=> $result['message']], $result['statusCode']);
     }
 
     /**
      * Count available cars
      */
-    public function total()
+    public function total() :JsonResponse
     {
         return response()->json([
-            "total_cars" => Car::where("status", Car::status())->count()
+            "total_cars" => CarHandler::countAvailableCars()
         ]);
     }
 
     /**
      * Update the car data
      */
-    public function update(Request $request)
+    public function update(Request $request) :JsonResponse
     {
-        $rules = Car::rules();
-        $rules["license"] = Rule::unique("cars")->ignore($request->all()['id']);
-        $rules['id'] = ["required", "numeric"];
-
-        $carData = $request->validate($rules);
-        $car = Car::findOrFail($request->input("id"));
-
-        if($request->hasFile("images"))
-        {
-            $car->clearMediaCollection('cars_images');
-
-            foreach ($request->file('images') as $image) {
-                $car->addMedia($image)->toMediaCollection('cars_images');
-            }
-        }
-
-        unset($carData['images']);
-        $car->update($carData);
-        $updatedCar = $car;
-        $updatedCar->images = $car->imagesUrl;
-
-        return response()->json([
-            'updatedCar' => $updatedCar,
-            'message'=> 'You successfully update car',
-        ], 201);
+        return response()->json(CarHandler::updateCar($request));
     }
 
-    public function search(string $searchTerm, string $carStatus = "")
+    /**
+     * Search for all cars
+     */
+    public function search(Request $request) :JsonResponse
     {
-        if($carStatus === "")
+        if($request->query("term"))
         {
-            // search for all cars
-            return response()->json(
-                $this->getCars(
-                    Car::query()
-                        ->where(function ($query) use ($searchTerm) {
-                            $query->where('brand', 'LIKE', '%' . $searchTerm . '%')
-                                ->orWhere('license', 'LIKE', '%' . $searchTerm . '%')
-                                ->orWhere('model', 'LIKE', '%' . $searchTerm . '%');
-                        })
-                ),
-            200);
+            return response()->json(CarHandler::searchAllCars($request->query("term")));
         }
-        return response()->json(
-            Car::where('status', $carStatus)
-                ->where(function ($query) use ($searchTerm) {
-                    $query->where('brand', 'LIKE', '%' . $searchTerm . '%')
-                        ->orWhere('license', 'LIKE', '%' . $searchTerm . '%')
-                        ->orWhere('model', 'LIKE', '%' . $searchTerm . '%');
-                })
-                ->paginate(Car::$carsPerPage),
-        200);
-    }
-
-    protected function getCars($query = null)
-    {
-        $query = $query ?: Car::query();
-
-        $carsStatus = CarStatus::getStatusByOrder();
-
-        $cars = $query->orderByRaw("FIELD(status, $carsStatus)")
-            ->paginate(Car::$carsPerPage);
-
-        $cars->getCollection()->transform(function ($car) {
-            $car->color = CarStatus::getColor($car->status);
-            $car->last_time_updated = $car->updated_at !== $car->created_at ? $car->updated_at : null;
-            $car->images = $car->images_url;
-            return $car;
-        });
-
-        return $cars;
+        return response()->json([]);
     }
 }

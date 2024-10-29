@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\CarsWithImages;
 use App\Traits\DateFormater;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

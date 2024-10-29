@@ -66,21 +66,4 @@ class RentedCarRepository
         $data->setCollection($transformedData);
         return $data;
     }
-
-    static function getCarsWithImages(Builder $query, bool $paginate = true) : Collection|LengthAwarePaginator
-    {
-        $rentedCars = $paginate ? $query->paginate(RentedCar::$carsPerPage) : $query->get();
-
-        return $rentedCars->transform(function ($record) {
-            if ($record->car) {
-                $record->car->images = CarService::getImagesForCar($record->car);
-            }
-            return $record;
-        });
-    }
-
-    static function latest(){
-        return self::getCarsWithImages(RentedCar::select(["start_date", "return_date", "price_per_day", "car_id", "user_id"])
-            ->limit(RentedCar::$carsPerPage));
-    }
 }

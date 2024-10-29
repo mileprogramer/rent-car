@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Rules\ReasonForDiscount;
 use App\Rules\ReturnDate;
+use App\Traits\CarsWithImages;
 use App\Traits\DateFormater;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
