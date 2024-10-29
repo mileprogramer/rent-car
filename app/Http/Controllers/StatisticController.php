@@ -12,25 +12,25 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
-    public function index(StatisticsHandler $statisticsHandler)
+    public function index()
     {
-        return response()->json($statisticsHandler->getStats());
+        return response()->json(StatisticsHandler::getStats());
     }
 
-    public function search(Request $request, StatisticsHandler $statisticsHandler)
+    public function search(Request $request)
     {
         return response()->json(
-            $statisticsHandler->search($request)
+            StatisticsHandler::search($request)
         );
     }
 
     /**
      * Count returned cars this month
      */
-    public function returnedTotal(Request $request, StatisticsHandler $statisticsHandler)
+    public function returnedTotal(Request $request)
     {
         return response()->json(
-            $statisticsHandler->returnedTotal($request)
+            StatisticsHandler::returnedTotal($request)
         );
     }
 

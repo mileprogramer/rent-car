@@ -10,11 +10,9 @@ use Illuminate\Http\Request;
 
 class ExtenedRentController extends Controller
 {
-    /*
-     *
+    /**
      Extend the rent
-     *
-    */
+     **/
     public static function store (Request $request)
     {
         $data = $request->validate(ExtendRent::rules($request->all()));

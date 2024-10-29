@@ -20,24 +20,19 @@ use Illuminate\Support\Str;
 class RentedCarHandler
 {
 
-    public function __construct()
-    {
-
-    }
-
-    public function getCars() : LengthAwarePaginator
+    public static function getCars() : LengthAwarePaginator
     {
         return RentedCar::with("car:id,license", "user:id,name,phone,card_id")
             ->orderBy("created_at", "desc")
             ->paginate(RentedCar::$carsPerPage);
     }
 
-    public function search($searchTerm) : LengthAwarePaginator
+    public static function search($searchTerm) : LengthAwarePaginator
     {
         return RentedCarRepository::search($searchTerm);
     }
 
-    public function store(Request $request) : array
+    public static function store(Request $request) : array
     {
         $rentCarData = $request->all();
         if(!isset($rentCarData["user_id"])){
@@ -73,7 +68,7 @@ class RentedCarHandler
 
     }
 
-    public function returnCar(Request $request) : array
+    public static function returnCar(Request $request) : array
     {
         if(isset($request->all()['car_id']))
         {
@@ -122,7 +117,7 @@ class RentedCarHandler
         ];
     }
 
-    public function countTotalCars(Request $request) :array
+    public static function countTotalCars(Request $request) :array
     {
         if(!$request->has("month")){
             return [
@@ -140,7 +135,7 @@ class RentedCarHandler
         ];
     }
 
-    public function latestRented() :LengthAwarePaginator|Collection
+    public static function latestRented() :LengthAwarePaginator|Collection
     {
         return CarService::getCarsWithImages(
             RentedCar::select(["start_date", "return_date", "price_per_day", "car_id", "user_id"])

@@ -14,19 +14,14 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class StatisticsHandler
 {
 
-    public function __construct()
-    {
-
-    }
-
-    public function getStats() :LengthAwarePaginator
+    public static function getStats() :LengthAwarePaginator
     {
         return Statistics::with('extendedRents', 'car', 'user')
             ->orderBy("updated_at", "desc")
             ->paginate(Statistics::$perPageStat);
     }
 
-    public function search(Request $request) :LengthAwarePaginator
+    public static function search(Request $request) :LengthAwarePaginator
     {
         $query = Statistics::query();
         $possibleQueries = [
@@ -58,7 +53,7 @@ class StatisticsHandler
             ->paginate(Statistics::$perPageStat);
     }
 
-    public function returnedTotal(Request $request) :array
+    public static function returnedTotal(Request $request) :array
     {
         if($request->has("month")){
             $totalCars = StatisticsCarsRepository::returnedByMonth();
@@ -71,7 +66,7 @@ class StatisticsHandler
         return [];
     }
 
-    public function latestReturnedCars() :Collection|LengthAwarePaginator
+    public static function latestReturnedCars() :Collection|LengthAwarePaginator
     {
         return CarService::getCarsWithImages(
             Statistics::select(["start_date", "real_return_date", "total_price", "note" ,"car_id"])

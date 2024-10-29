@@ -20,18 +20,13 @@ use App\Repository\RentedCarRepository;
 class RentedCarController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->rentedCarHandler = new RentedCarHandler();
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index() : JsonResponse
     {
         return response()->json(
-            $this->rentedCarHandler->getCars()
+            RentedCarHandler::getCars()
         );
     }
 
@@ -40,7 +35,7 @@ class RentedCarController extends Controller
      */
     public function search(Request $request) : JsonResponse
     {
-        return response()->json($this->rentedCarHandler->search($request->query("term")), 200);
+        return response()->json(RentedCarHandler::search($request->query("term")), 200);
     }
 
     /**
@@ -48,7 +43,7 @@ class RentedCarController extends Controller
      */
     public function store(Request $request)
     {
-        $result = $this->rentedCarHandler->store($request);
+        $result = RentedCarHandler::store($request);
 
         return response()->json([
             'message'=> $result['message']
@@ -60,7 +55,7 @@ class RentedCarController extends Controller
      */
     public function return(Request $request)
     {
-        $result = $this->rentedCarHandler->returnCar($request);
+        $result = RentedCarHandler::returnCar($request);
 
         return response()->json([
             "message" => $result['message']
@@ -72,7 +67,7 @@ class RentedCarController extends Controller
      */
     public function total(Request $request)
     {
-        $results = $this->rentedCarHandler->countTotalCars($request);
+        $results = RentedCarHandler::countTotalCars($request);
         return response()->json([
             "total_cars" => $results['totalCars']
         ]);
@@ -83,7 +78,7 @@ class RentedCarController extends Controller
      */
     public function latest()
     {
-        return response()->json($this->rentedCarHandler->latestRented());
+        return response()->json(RentedCarHandler::latestRented());
     }
 
 }
