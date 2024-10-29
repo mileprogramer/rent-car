@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Handlers\UserHandler;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -9,30 +10,20 @@ class UserController extends Controller
 {
     public function index()
     {
-        return response()->json(User::select("id", "name", "email", "phone", "card_id")->paginate(User::$usersPerPage));
+        return response()->json(UserHandler::showUsers());
     }
 
     public function search(Request $request)
     {
         return response()->json(
-            User::select("id", "name", "email", "phone", "card_id")
-                ->where("name", "like" , "%" . $request->query("search_term") . "%")
-                ->orWhere("card_id", $request->query("search_term"))
-                ->paginate(User::$usersPerPage)
+            UserHandler::search($request->query("search_term"))
         );
     }
 
     public function update(Request $request)
     {
-        $data = $request->validate(User::rulesEdit($request->all()));
 
-        $user = User::where("id", $data['id'])->firstOrFail();
-        $user->card_id = $data['card_id'];
-        $user->name = $data['name'];
-        $user->email = $data['email'];
-        $user->phone = $data['phone'];
-        $user->save();
-
+        $result = UserHandler::editUser($request);
         return response()->json(["message"=> "Successfully updated user"]);
     }
 }

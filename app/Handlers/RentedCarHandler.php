@@ -39,21 +39,14 @@ class RentedCarHandler
 
     public function store(Request $request) : array
     {
-
-        $rentCarRules = RentedCar::rules($request->all());
-        $rentCarData = [];
-        if(!isset($request->all()["user_id"])){
+        $rentCarData = $request->all();
+        if(!isset($rentCarData["user_id"])){
             // new customer
-            $rentCarRules = array_merge($rentCarRules, User::rules());
-            unset($rentCarRules['user_id']);
-            $rentCarData = $request->validate($rentCarRules);
-            $user = User::create([
+            $user = UserHandler::addNewUser([
                 "name" => $rentCarData['name'],
                 "phone" => $rentCarData['phone'],
                 "card_id" => $rentCarData['card_id'],
                 "email" => $rentCarData['email'],
-                "password" => Hash::make("password"),
-                "remember_token" => Str::random(10)
             ]);
             $rentCarData['user_id'] = $user->id;
             unset($rentCarData['name'], $rentCarData['phone'], $rentCarData['card_id'], $rentCarData['email']);
@@ -61,7 +54,7 @@ class RentedCarHandler
         if(empty($rentCarData))
         {
             // old customer
-            $rentCarData = $request->validate($rentCarRules);
+            $rentCarData = $request->validate(RentedCar::rules());
         }
         $car = Car::where('id', $rentCarData['car_id'])->firstOrFail();
         $rentCarData['price_per_day'] = $car->price_per_day;
