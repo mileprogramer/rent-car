@@ -49,10 +49,10 @@ class StatisticController extends Controller
         return response()->json($results);
     }
 
-    public function latest(StatisticsHandler $statisticsHandler)
+    public function latest()
     {
         return response()->json(
-            $statisticsHandler->latestReturnedCars()
+            StatisticsHandler::latestReturnedCars()
         );
     }
 }

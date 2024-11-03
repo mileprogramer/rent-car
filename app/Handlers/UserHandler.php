@@ -21,7 +21,7 @@ class UserHandler
     {
         return User::select("id", "name", "email", "phone", "card_id")
             ->where("name", "like" , "%" . $searchTerm . "%")
-            ->orWhere("card_id", $searchTerm)
+            ->orWhere("card_id", "like", "%" . $searchTerm. "%")
             ->paginate(User::$usersPerPage);
     }
 

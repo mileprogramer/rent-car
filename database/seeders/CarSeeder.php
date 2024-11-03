@@ -779,7 +779,7 @@ class CarSeeder extends Seeder
     protected function addImages($cars){
         foreach ($cars as &$car)
         {
-            $car->copyMedia(storage_path("app/public/cars-images/default/car-front-5.jpg"))->toMediaCollection("cars_images");
+            $car->copyMedia(public_path("car-default.jpg"))->toMediaCollection("cars_images");
         }
     }
 }
