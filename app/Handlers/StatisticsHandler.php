@@ -49,7 +49,7 @@ class StatisticsHandler
             }
         }
         return $query->orderBy("created_at", "desc")
-            ->with(['car:id,license', 'user:id,name,phone,card_id'])
+            ->with(['car:id,license', 'user:id,name,phone,card_id', "extendedRents"])
             ->paginate(Statistics::$perPageStat);
     }
 
