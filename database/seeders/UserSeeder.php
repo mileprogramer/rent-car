@@ -18,8 +18,33 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
+                'name' => 'Nemanja Milic',
+                'email' => 'adminMile@rentcar.com',
+                'username' => 'adminMile',
+                'email_verified_at' => now(),
+                'phone' => "+1 (212) 551-2376",
+                'card_id' => '654-32-1487',
+                'password' => Hash::make('adminMile'),
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Marko Markovic',
+                'email' => 'marko.markovic@rentcar.com',
+                'username' => "markoadmin",
+                'email_verified_at' => now(),
+                'phone' => "+1 (212) 535-2376",
+                'card_id' => '654-41-1987',
+                'password' => Hash::make('password123'),
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'name' => 'John Doe',
                 'email' => 'john.doe@example.com',
+                'username' => "no-username",
                 'email_verified_at' => now(),
                 'phone' => "+1 (212) 555-2376",
                 'card_id' => '654-32-1987',
@@ -31,6 +56,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Jane Smith',
                 'email' => 'jane.smith@example.com',
+                'username' => "no-username",
                 'email_verified_at' => now(),
                 "phone" => "+1 (310) 555-4819",
                 'card_id' => '321-76-5432',
@@ -41,6 +67,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name' => 'Alice Johnson',
+                'username' => "no-username",
                 'email' => 'alice.johnson@example.com',
                 'email_verified_at' => now(),
                 "phone" => '+1 (305) 555-7284',
@@ -53,6 +80,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Bob Brown',
                 'email' => 'bob.brown@example.com',
+                'username' => "no-username",
                 'email_verified_at' => now(),
                 'phone' => '+1 (312) 555-1963',
                 'card_id' => '123-45-6789',
@@ -64,6 +92,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Charlie Davis',
                 'email' => 'charlie.davis@example.com',
+                'username' => "no-username",
                 'email_verified_at' => now(),
                 'phone' => '+1 (415) 555-9823',
                 'card_id' => '123-75-5789',
