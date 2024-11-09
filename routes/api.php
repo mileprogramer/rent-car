@@ -24,11 +24,13 @@ use App\Http\Controllers\StatisticController;
 
 Route::post("admin/login", [\App\Http\Controllers\AuthController::class, "login"]);
 
-//Route::middleware(['auth:sanctum'])->group(function () {
-//});
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('users', [UserController::class, 'index']);
+    Route::get('users/search', [UserController::class, 'search']);
 
-Route::get('users', [UserController::class, 'index']);
-Route::get('users/search', [UserController::class, 'search']);
+
+});
+
 
 // Users post
 Route::post('user/edit', [UserController::class, 'update']);

@@ -11,15 +11,15 @@ class AuthController extends Controller
 {
     public function login(LoginAdministratorRequest $request): \Illuminate\Http\JsonResponse
     {
-        $request->validated($request->only(['email', 'password']));
+        $request->validated($request->only(['username', 'password']));
 
-        if(!Auth::attempt($request->only(['email', 'password']))) {
+        if(!Auth::attempt($request->only(['username', 'password']))) {
             return response()->json([
                 "message" => "Wrong credentials"
             ], 401);
         }
 
-        $user = User::where('username', $request->email)->first();
+        $user = User::where('username', $request->username)->first();
 
         return response()->json([
             'user' => $user,
