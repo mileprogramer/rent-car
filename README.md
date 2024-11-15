@@ -2,6 +2,8 @@
 
 This is the backend REST API project for the [rentcar frontend application](https://github.com/mileprogramer/rentcar).  
 For the business scenario, please refer to the frontend repository linked above.
+Live app is at
+https://rentcardip.mileprogramer.rs
 
 ### To Start the Project
 1. Run `composer install` to install dependencies.
