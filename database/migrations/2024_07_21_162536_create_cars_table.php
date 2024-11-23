@@ -19,8 +19,6 @@ return new class extends Migration
             $table->string('year');
             $table->integer('price_per_day');
             $table->enum('transmission_type', \App\Enums\TransmissionType::values());
-            $table->integer('number_of_doors');
-            $table->integer('person_fit_in');
             $table->integer('car_consumption');
             $table->enum('air_conditioning_type', \App\Enums\AirConditionerType::values());
             $table->enum('status', \App\Enums\CarStatus::values());
