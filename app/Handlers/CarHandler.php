@@ -18,7 +18,6 @@ class CarHandler
 
         $cars->setCollection(
             $cars->getCollection()->map(function ($car) {
-                $car->color = CarStatus::getColor($car->status);
                 $car->last_time_updated = $car->updated_at !== $car->created_at ? $car->updated_at : null;
                 return $car;
             })

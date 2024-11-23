@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\AirConditionerType;
 use App\Enums\CarStatus;
 use App\Enums\TransmissionType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,12 +19,6 @@ class Car extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'license',
         'model',
@@ -39,11 +34,6 @@ class Car extends Model implements HasMedia
         'images',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'id' => 'integer',
     ];
@@ -56,7 +46,6 @@ class Car extends Model implements HasMedia
     }
 
     public static $carsPerPage = 10;
-    public static $acceptImageType = ["jpeg", "webp", "png", "jpg", "avif"];
 
     public static function rules() :array
     {
@@ -74,6 +63,18 @@ class Car extends Model implements HasMedia
             'number_of_doors' => ['required', 'numeric', 'min:1'],
             "images" => ['array'],
         ];
+    }
+
+    protected function lastTimeUpdated(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => $this->updated_at !== $this->created_at ? $this->updated_at : null,
+        );
+    }
+
+    public function scopeAvailableCars(Builder $query): Builder
+    {
+        return $query->where("status", Car::status());
     }
 
     public function registerMediaCollections(): void
@@ -96,11 +97,6 @@ class Car extends Model implements HasMedia
             },
         );
     }
-
-//    public function images() :HasMany
-//    {
-//        return $this->hasMany(Media::class, "model_id", "id");
-//    }
 
     public function rentedCar(): HasOne
     {

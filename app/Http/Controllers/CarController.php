@@ -17,39 +17,43 @@ use Illuminate\Validation\Rule;
 
 class CarController extends Controller
 {
-    /**
-     * Display a listing of all cars
-     */
     public function index() :JsonResponse
     {
-        return response()->json(CarHandler::getAllCars());
+        $carsStatus = CarStatus::getStatusByOrder();
+        $cars = CarService::getCarsWithImages(
+            Car::orderByRaw("FIELD(status, $carsStatus)")->with("media")
+        );
+
+        return response()->json($cars);
     }
 
-    /**
-     * Display a listing of available cars
-     */
     public function available() :JsonResponse
     {
-        return response()->json(CarHandler::getAvailableCars());
+        return response()->json(
+            Car::availableCars()
+                ->paginate(Car::$carsPerPage)
+        );
     }
 
-    /**
-     * Search available cars
-     */
     public function searchAvailable(Request $request) :JsonResponse
     {
-        if(($request->query("term"))){
-            return response()->json(CarHandler::searchAvailableCars($request->query("term")));
+        if(!($request->query("term"))){
+            abort(404);
         }
-        return response()->json([]);
+        return response()->json(
+            Car::availableCars()
+                ->where(function ($query) use ($request) {
+                    $query->where('brand', 'LIKE', '%' . $request->query("term") . '%')
+                        ->orWhere('license', 'LIKE', '%' . $request->query("term") . '%')
+                        ->orWhere('model', 'LIKE', '%' . $request->query("term") . '%');
+                })
+                ->paginate(Car::$carsPerPage)
+        );
     }
 
-    /**
-     * Show the cars that have these filters
-     */
-    public function filter(Request $request) :JsonResponse
+    public function filter(Request $request, CarService $carService) :JsonResponse
     {
-        return response()->json(CarHandler::filterCars($request));
+        return response()->json($carService->filterCars($request));
     }
 
     /**

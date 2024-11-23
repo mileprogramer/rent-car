@@ -25,15 +25,4 @@ enum CarStatus :string
         ];
         return "'" . implode("', '", $carStatus) . "'";
     }
-
-    public static function getColor(string $carStatus) :string
-    {
-        $colors = [
-            CarStatus::Available->value => "success",
-            CarStatus::Rented->value => "rented",
-            CarStatus::Broken->value => "broken",
-            CarStatus::Deleted->value => "deleted",
-        ];
-        return $colors[$carStatus];
-    }
 }

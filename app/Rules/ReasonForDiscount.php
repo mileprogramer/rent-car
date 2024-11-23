@@ -9,12 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class ReasonForDiscount implements ValidationRule, DataAwareRule
 {
-    /**
-     * Run the validation rule.
-     *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     */
-
     protected $data = [];
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

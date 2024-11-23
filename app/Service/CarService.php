@@ -7,6 +7,7 @@ use App\Models\RentedCar;
 use App\Models\Statistics;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
@@ -86,6 +87,30 @@ class CarService
         foreach ($newImages as $image) {
             $car->addMedia($image)->toMediaCollection('cars_images');
         }
+    }
+
+    function filterCars(Request  $request)
+    {
+        $query = Car::query();
+        $columnsFilter = [
+            "air_conditioning_type",
+            "status",
+            "transmission_type",
+            "model",
+            "brand",
+            "person_fit_in",
+            "year",
+            "car_consumption"
+        ];
+
+        foreach ($columnsFilter as $column)
+        {
+            if($request->query($column))
+            {
+                $query->where($column, $request->query($column));
+            }
+        }
+        return $query->paginate(Car::$carsPerPage);
     }
 
     static function getImagesForCar(Car $car) :Collection
