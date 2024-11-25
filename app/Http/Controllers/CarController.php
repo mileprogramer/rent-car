@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\CarStatus;
 use App\Handlers\CarHandler;
+use App\Http\Requests\CarImagesRequest;
+use App\Http\Requests\DefaultCarRequest;
 use App\Models\Car;
 use App\Models\RentedCar;
 use App\Repository\StatisticsCarsRepository;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -41,28 +44,24 @@ class CarController extends Controller
             abort(404);
         }
         return response()->json(
-            Car::availableCars()
-                ->where(function ($query) use ($request) {
-                    $query->where('brand', 'LIKE', '%' . $request->query("term") . '%')
-                        ->orWhere('license', 'LIKE', '%' . $request->query("term") . '%')
-                        ->orWhere('model', 'LIKE', '%' . $request->query("term") . '%');
-                })
+            Car::searchavailableCars($request->query("term"))
                 ->paginate(Car::$carsPerPage)
         );
     }
 
-    public function filter(Request $request, CarService $carService) :JsonResponse
+    public function store(DefaultCarRequest $defaultRequest, CarImagesRequest $carImagesRequest, CarService $carService) :JsonResponse
     {
-        return response()->json($carService->filterCars($request));
-    }
+        $carData = $defaultRequest->validate(array_merge(
+            $defaultRequest->rules(), $carImagesRequest->rules()
+        ));
 
-    /**
-     * Store a new car
-     */
-    public function store(Request $request) :JsonResponse
-    {
-        $result = CarHandler::createNewCar($request);
-        return response()->json(['message'=> $result['message']], $result['statusCode']);
+        $images = Arr::pull($carData, 'images');
+        $car = Car::create($carData);
+        $carService->storeImagesForCar($car, $images);
+
+        return response()->json([
+            'message'=> "New car is created"
+        ], 201);
     }
 
     /**
@@ -78,9 +77,27 @@ class CarController extends Controller
     /**
      * Update the car data
      */
-    public function update(Request $request) :JsonResponse
+    public function update(Car $car, CarService $carService, DefaultCarRequest $request) : JsonResponse
     {
-        return response()->json(CarHandler::updateCar($request));
+        $defaultRules = $request->rules();
+        $defaultRules["license"] = Rule::unique("cars")->ignore($car->id);
+
+        $carData = $request->except(['images']);
+
+        if ($request->hasFile('images')) {
+            $validatedImages = $request->validate($imageRules);
+            $carService->updateImagesForCar($car, $validatedImages['images']);
+        }
+
+        $car->update($carData);
+
+        $updatedCar = $car;
+        $updatedCar->images = $carService->getImagesForCar($car);
+
+        return response()->json([
+            'updatedCar' => $updatedCar,
+            'message' => 'Car successfully updated',
+        ]);
     }
 
     /**

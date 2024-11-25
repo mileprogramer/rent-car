@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Http\Requests\CarImagesRequest;
 use App\Models\Car;
 use App\Models\RentedCar;
 use App\Models\Statistics;
@@ -9,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -69,7 +71,7 @@ class CarService
      * @throws FileDoesNotExist
      * @throws FileIsTooBig
      */
-    static function storeImagesForCar(Car $car, array $images) :void
+    function storeImagesForCar(Car $car, array $images) :void
     {
         foreach ($images as $image) {
             $car->addMedia($image)->toMediaCollection('cars_images');
@@ -80,7 +82,7 @@ class CarService
      * @throws FileDoesNotExist
      * @throws FileIsTooBig
      */
-    static function updateImagesForCar(Car $car, array $newImages) : void
+    function updateImagesForCar(Car $car, array $newImages) : void
     {
         $car->clearMediaCollection('cars_images');
 
@@ -89,28 +91,17 @@ class CarService
         }
     }
 
-    function filterCars(Request  $request)
+    function shouldUpdateImages(Request $request) :bool
     {
-        $query = Car::query();
-        $columnsFilter = [
-            "air_conditioning_type",
-            "status",
-            "transmission_type",
-            "model",
-            "brand",
-            "person_fit_in",
-            "year",
-            "car_consumption"
-        ];
+        if($request->hasFile("images"))
+            return true;
 
-        foreach ($columnsFilter as $column)
-        {
-            if($request->query($column))
-            {
-                $query->where($column, $request->query($column));
-            }
-        }
-        return $query->paginate(Car::$carsPerPage);
+        return false;
+    }
+
+    function validateImages(CarImagesRequest $request)
+    {
+
     }
 
     static function getImagesForCar(Car $car) :Collection

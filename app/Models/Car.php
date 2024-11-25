@@ -77,6 +77,15 @@ class Car extends Model implements HasMedia
         return $query->where("status", Car::status());
     }
 
+    public function scopeSearchAvailableCars(Builder $query, string $term): Builder
+    {
+        return $query->availableCars()->where(function ($query) use ($term) {
+            $query->where('brand', 'LIKE', '%' . $term . '%')
+                ->orWhere('license', 'LIKE', '%' . $term . '%')
+                ->orWhere('model', 'LIKE', '%' . $term . '%');
+        });
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('cars_images');
