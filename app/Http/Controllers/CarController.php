@@ -6,6 +6,7 @@ use App\Enums\CarStatus;
 use App\Handlers\CarHandler;
 use App\Http\Requests\CarImagesRequest;
 use App\Http\Requests\DefaultCarRequest;
+use App\Http\Requests\UpdateCarRequest;
 use App\Models\Car;
 use App\Models\RentedCar;
 use App\Repository\StatisticsCarsRepository;
@@ -64,9 +65,6 @@ class CarController extends Controller
         ], 201);
     }
 
-    /**
-     * Count available cars
-     */
     public function total() :JsonResponse
     {
         return response()->json([
@@ -74,23 +72,18 @@ class CarController extends Controller
         ]);
     }
 
-    /**
-     * Update the car data
-     */
-    public function update(Car $car, CarService $carService, DefaultCarRequest $request) : JsonResponse
+    public function update(CarService $carService, UpdateCarRequest $request) : JsonResponse
     {
-        $defaultRules = $request->rules();
-        $defaultRules["license"] = Rule::unique("cars")->ignore($car->id);
+        $car = Car::where("id", $request->id)->firstOrFail();
+        $carData = $request->validated();
 
-        $carData = $request->except(['images']);
-
-        if ($request->hasFile('images')) {
-            $validatedImages = $request->validate($imageRules);
-            $carService->updateImagesForCar($car, $validatedImages['images']);
+        if($request->hasFile("images"))
+        {
+          $carService->updateImagesForCar($car, $request->images);
+            unset($carData['images']);
         }
 
         $car->update($carData);
-
         $updatedCar = $car;
         $updatedCar->images = $carService->getImagesForCar($car);
 

@@ -6,12 +6,13 @@ use App\Enums\AirConditionerType;
 use App\Enums\CarStatus;
 use App\Enums\TransmissionType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DefaultCarRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
     public function rules(): array
     {

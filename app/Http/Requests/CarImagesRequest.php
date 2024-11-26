@@ -16,7 +16,8 @@ class CarImagesRequest extends FormRequest
         return [
             'required',
             'image',
-            'dimensions:max_width=700,max_height=500'
+            'dimensions:max_width=1000,max_height=700',
+            'max:2048'
         ];
     }
 }
