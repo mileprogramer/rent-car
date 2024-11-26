@@ -26,12 +26,9 @@ class Car extends Model implements HasMedia
         'year',
         'price_per_day',
         'transmission_type',
-        'number_of_doors',
-        'person_fit_in',
         'car_consumption',
         'air_conditioning_type',
         'status',
-        'images',
     ];
 
     protected $casts = [
@@ -46,24 +43,6 @@ class Car extends Model implements HasMedia
     }
 
     public static $carsPerPage = 10;
-
-    public static function rules() :array
-    {
-        return [
-            'license' => ['required', 'string' ,'min:4', 'max:8', "unique:cars"],
-            'model' => ['required', 'string', 'min:1', 'max:20'],
-            'brand' => ['required', 'string', 'min:1', 'max:20'],
-            'year' => ['required', 'numeric','between:1950,'.date('Y')],
-            'price_per_day' => ['required', 'numeric', 'min:1'],
-            'transmission_type' => ['required', 'string', 'in:'. implode(',', TransmissionType::values())],
-            'air_conditioning_type' => ['required', 'string', 'in:'. implode(',', AirConditionerType::values())],
-            'status' => ['required', 'string', 'in:'. implode(',', CarStatus::values())],
-            'car_consumption' => ['required', 'numeric', 'min:1'],
-            'person_fit_in' => ['required', 'numeric', 'min:1'],
-            'number_of_doors' => ['required', 'numeric', 'min:1'],
-            "images" => ['array'],
-        ];
-    }
 
     protected function lastTimeUpdated(): Attribute
     {
@@ -117,22 +96,6 @@ class Car extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('cars_images');
-    }
-
-    protected function imagesUrl(): Attribute
-    {
-        return Attribute::make(
-            get: function() {
-                $images = $this->getMedia("cars_images");
-                // makes urls
-                $urls = [];
-                foreach ($images as $image)
-                {
-                    $urls[] = $image->getUrl();
-                }
-                return $urls;
-            },
-        );
     }
 
     public function rentedCar(): HasOne

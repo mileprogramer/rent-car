@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Models\Statistics;
-use App\Service\CarService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;

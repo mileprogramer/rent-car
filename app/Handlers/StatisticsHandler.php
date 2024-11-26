@@ -66,9 +66,9 @@ class StatisticsHandler
         return [];
     }
 
-    public static function latestReturnedCars() :Collection|LengthAwarePaginator
+    public static function latestReturnedCars(CarService $carService) :Collection|LengthAwarePaginator
     {
-        return CarService::getCarsWithImages(
+        return $carService->getCarsWithImages(
             Statistics::select(["start_date", "real_return_date", "total_price", "note" ,"car_id"])
                 ->with("car:id,license", "car.media")
                 ->whereNotNull("real_return_date")
