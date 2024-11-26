@@ -6,6 +6,7 @@ use App\Enums\CarStatus;
 use App\Handlers\CarHandler;
 use App\Http\Requests\CarImagesRequest;
 use App\Http\Requests\DefaultCarRequest;
+use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
 use App\Models\Car;
 use App\Models\RentedCar;
@@ -50,11 +51,9 @@ class CarController extends Controller
         );
     }
 
-    public function store(DefaultCarRequest $defaultRequest, CarImagesRequest $carImagesRequest, CarService $carService) :JsonResponse
+    public function store(StoreCarRequest $request, CarService $carService) :JsonResponse
     {
-        $carData = $defaultRequest->validate(array_merge(
-            $defaultRequest->rules(), $carImagesRequest->rules()
-        ));
+        $carData = $request->validated();
 
         $images = Arr::pull($carData, 'images');
         $car = Car::create($carData);
