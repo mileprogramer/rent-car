@@ -72,9 +72,37 @@ class Car extends Model implements HasMedia
         );
     }
 
+    protected function carsImages(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                if ($this?->media) {
+                    return $this->images = $this->media->map(function ($media) {
+                        return $media->getUrl();
+                    });
+                }
+
+                return collect([]);
+            }
+        );
+    }
+
     public function scopeAvailableCars(Builder $query): Builder
     {
         return $query->where("status", Car::status());
+    }
+
+    public function scopeTotalAvailableCars(Builder $query): int
+    {
+        return $query->where("status", Car::status())->count();
+    }
+    public function scopeSearchCars(Builder $query, string $term): Builder
+    {
+        return $query->where(function ($query) use ($term) {
+            $query->where('brand', 'LIKE', '%' . $term . '%')
+                ->orWhere('license', 'LIKE', '%' . $term . '%')
+                ->orWhere('model', 'LIKE', '%' . $term . '%');
+        });
     }
 
     public function scopeSearchAvailableCars(Builder $query, string $term): Builder

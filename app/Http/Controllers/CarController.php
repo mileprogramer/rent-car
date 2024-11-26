@@ -21,10 +21,10 @@ use Illuminate\Validation\Rule;
 
 class CarController extends Controller
 {
-    public function index() :JsonResponse
+    public function index(CarService $carService) :JsonResponse
     {
         $carsStatus = CarStatus::getStatusByOrder();
-        $cars = CarService::getCarsWithImages(
+        $cars = $carService->getCarsWithImages(
             Car::orderByRaw("FIELD(status, $carsStatus)")->with("media")
         );
 
@@ -68,7 +68,7 @@ class CarController extends Controller
     public function total() :JsonResponse
     {
         return response()->json([
-            "total_cars" => CarHandler::countAvailableCars()
+            "total_cars" => Car::totalAvailableCars()
         ]);
     }
 
@@ -80,12 +80,12 @@ class CarController extends Controller
         if($request->hasFile("images"))
         {
           $carService->updateImagesForCar($car, $request->images);
-            unset($carData['images']);
+          unset($carData['images']);
         }
 
         $car->update($carData);
         $updatedCar = $car;
-        $updatedCar->images = $carService->getImagesForCar($car);
+        $updatedCar->images = $car->car_images;
 
         return response()->json([
             'updatedCar' => $updatedCar,
@@ -93,15 +93,16 @@ class CarController extends Controller
         ]);
     }
 
-    /**
-     * Search for all cars
-     */
-    public function search(Request $request) :JsonResponse
+    public function search(Request $request, CarService $carService) :JsonResponse
     {
         if($request->query("term"))
         {
-            return response()->json(CarHandler::searchAllCars($request->query("term")));
+            return response()->json(
+                $carService->getCarsWithImages(
+                    Car::searchCars($request->query("term"))
+                )
+            );
         }
-        return response()->json([]);
+        abort(404);
     }
 }

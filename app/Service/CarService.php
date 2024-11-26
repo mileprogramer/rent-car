@@ -91,20 +91,7 @@ class CarService
         }
     }
 
-    function shouldUpdateImages(Request $request) :bool
-    {
-        if($request->hasFile("images"))
-            return true;
-
-        return false;
-    }
-
-    function validateImages(CarImagesRequest $request)
-    {
-
-    }
-
-    static function getImagesForCar(Car $car) :Collection
+    function getImagesForCar(Car $car) :Collection
     {
         if ($car?->media) {
             return $car->images = $car->media->map(function ($media) {
@@ -115,7 +102,7 @@ class CarService
         return collect([]);
     }
 
-    static function getCarsWithImages(
+    function getCarsWithImages(
         Builder|Statistics|Car|RentedCar $query,
         bool $paginate = true,
         int $perPage = 10,
@@ -128,12 +115,12 @@ class CarService
             $cars->getCollection()->map(function ($record) {
                 // for the Statistics, RentedCar and etc records...
                 if ($record->car) {
-                    $record->car->images = CarService::getImagesForCar($record->car);
+                    $record->car->images = $this->getImagesForCar($record->car);
                 }
                 else
                 {
                     // for Car records
-                    $record->images = CarService::getImagesForCar($record);
+                    $record->images = $this->getImagesForCar($record);
                 }
                 return $record;
             })
