@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteCarRequest;
 use App\Models\Car;
 use App\Models\DeleteCar;
 use Illuminate\Http\Request;
@@ -17,9 +18,9 @@ class DeleteCarController extends Controller
         return response()->json(DeleteCar::paginate());
     }
 
-    public function delete(Request $request)
+    public function delete(DeleteCarRequest $request)
     {
-        $carData = $request->validate(DeleteCar::rules());
+        $carData = $request->validated();
         DeleteCar::create($carData);
         Car::where('id', $carData['car_id'])->update(['status' => DeleteCar::status()]);
 
