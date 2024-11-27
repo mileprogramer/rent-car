@@ -5,7 +5,7 @@ namespace app\Repository;
 
 use App\Models\RentedCar;
 use App\Models\Statistics;
-use App\Service\CarService;
+use App\Services\CarService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;

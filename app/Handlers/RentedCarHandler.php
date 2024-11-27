@@ -9,7 +9,7 @@ use App\Models\Statistics;
 use App\Models\User;
 use App\Repository\RentedCarRepository;
 use App\Repository\StatisticsCarsRepository;
-use App\Service\CarService;
+use App\Services\CarService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -30,42 +30,6 @@ class RentedCarHandler
     public static function search($searchTerm) : LengthAwarePaginator
     {
         return RentedCarRepository::search($searchTerm);
-    }
-
-    public static function store(Request $request) : array
-    {
-        $rentCarData = $request->all();
-        if(!isset($rentCarData["user_id"])){
-            // new customer
-            $user = UserHandler::addNewUser([
-                "name" => $rentCarData['name'],
-                "phone" => $rentCarData['phone'],
-                "card_id" => $rentCarData['card_id'],
-                "email" => $rentCarData['email'],
-            ]);
-            $rentCarData['user_id'] = $user->id;
-            unset($rentCarData['name'], $rentCarData['phone'], $rentCarData['card_id'], $rentCarData['email']);
-        }
-        if(empty($rentCarData))
-        {
-            // old customer
-            $rentCarData = $request->validate(RentedCar::rules());
-        }
-        $car = Car::where('id', $rentCarData['car_id'])->firstOrFail();
-        $rentCarData['price_per_day'] = $car->price_per_day;
-        $rentedCar = RentedCar::create($rentCarData);
-        $rentCarData['created_at'] = $rentedCar['created_at'];
-        $rentCarData['wanted_return_date'] = $rentedCar['return_date'];
-
-        unset($rentCarData['return_date']);
-        Statistics::create($rentCarData);
-        $car->update(['status' => RentedCar::status()]);
-
-        return [
-            "message" => "Successfully rented car",
-            "statusCode" => 201
-        ];
-
     }
 
     public static function returnCar(Request $request) : array

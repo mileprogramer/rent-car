@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Handlers\RentedCarHandler;
+use App\Http\Requests\RentCarRequest;
 use App\Models\Car;
 use App\Models\ExtendRent;
 use App\Models\RentedCar;
 use App\Models\Statistics;
 use App\Models\User;
 use App\Repository\StatisticsCarsRepository;
-use App\Service\CarService;
+use App\Services\CarService;
+use App\Services\RentedCarService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,35 +21,27 @@ use App\Repository\RentedCarRepository;
 
 class RentedCarController extends Controller
 {
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index() : JsonResponse
     {
         return response()->json(
-            RentedCarHandler::getCars()
+            RentedCar::with("car:id,license", "user:id,name,phone,card_id")
+                ->orderBy("created_at", "desc")
+                ->paginate(RentedCar::$carsPerPage)
         );
     }
-
-    /**
-     * Search for cars.
-     */
     public function search(Request $request) : JsonResponse
     {
-        return response()->json(RentedCarHandler::search($request->query("term")), 200);
+        return response()->json(RentedCarRepository::search($request->query("term")), 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(RentCarRequest $request, RentedCarService $rentedCarService) :JsonResponse
     {
-        $result = RentedCarHandler::store($request);
+        $rentCarData = $request->validated();
+        $rentedCarService->rentCar($rentCarData);
 
         return response()->json([
-            'message'=> $result['message']
-        ], $result['statusCode']);
+            "message" => "Successfully rented car"
+        ]);
     }
 
     /**

@@ -11,7 +11,7 @@ use App\Http\Requests\UpdateCarRequest;
 use App\Models\Car;
 use App\Models\RentedCar;
 use App\Repository\StatisticsCarsRepository;
-use App\Service\CarService;
+use App\Services\CarService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

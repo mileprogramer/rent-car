@@ -6,7 +6,7 @@ use App\Models\Car;
 use App\Models\Statistics;
 use App\Models\User;
 use App\Repository\StatisticsCarsRepository;
-use App\Service\CarService;
+use App\Services\CarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
