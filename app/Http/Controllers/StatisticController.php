@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Handlers\StatisticsHandler;
-use App\Models\Car;
 use App\Models\Statistics;
-use App\Models\User;
 use App\Repository\StatisticsCarsRepository;
 use App\Services\CarService;
+use App\Services\StatisticsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
     public function index()
     {
-        return response()->json(StatisticsHandler::getStats());
+        return response()->json(
+            Statistics::with('extendedRents', 'car', 'user')
+                ->orderBy("updated_at", "desc")
+                ->paginate(Statistics::$perPageStat)
+        );
     }
 
-    public function search(Request $request)
+    public function search(Request $request, StatisticsService $statisticsService)
     {
         return response()->json(
-            StatisticsHandler::search($request)
+            $statisticsService->search($request)
         );
     }
 

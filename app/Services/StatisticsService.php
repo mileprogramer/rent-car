@@ -1,27 +1,15 @@
 <?php
 
-namespace App\Handlers;
+namespace App\Services;
 
 use App\Models\Car;
 use App\Models\Statistics;
 use App\Models\User;
-use App\Repository\StatisticsCarsRepository;
-use App\Services\CarService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class StatisticsHandler
+class StatisticsService
 {
-
-    public static function getStats() :LengthAwarePaginator
-    {
-        return Statistics::with('extendedRents', 'car', 'user')
-            ->orderBy("updated_at", "desc")
-            ->paginate(Statistics::$perPageStat);
-    }
-
-    public static function search(Request $request) :LengthAwarePaginator
+    public function search(Request $request)
     {
         $query = Statistics::query();
         $possibleQueries = [
@@ -52,5 +40,4 @@ class StatisticsHandler
             ->with(['car:id,license', 'user:id,name,phone,card_id', "extendedRents"])
             ->paginate(Statistics::$perPageStat);
     }
-
 }
