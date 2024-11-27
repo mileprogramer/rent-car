@@ -53,26 +53,4 @@ class StatisticsHandler
             ->paginate(Statistics::$perPageStat);
     }
 
-    public static function returnedTotal(Request $request) :array
-    {
-        if($request->has("month")){
-            $totalCars = StatisticsCarsRepository::returnedByMonth();
-            if(empty($totalCars))
-                return ["total_cars" => 0];
-
-            return ["total_cars" => $totalCars[0]->total_cars];
-        }
-
-        return [];
-    }
-
-    public static function latestReturnedCars(CarService $carService) :Collection|LengthAwarePaginator
-    {
-        return $carService->getCarsWithImages(
-            Statistics::select(["start_date", "real_return_date", "total_price", "note" ,"car_id"])
-                ->with("car:id,license", "car.media")
-                ->whereNotNull("real_return_date")
-                ->orderBy("updated_at", "desc"));
-    }
-
 }

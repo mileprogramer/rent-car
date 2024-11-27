@@ -10,16 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Query\Builder;
 
 class Statistics extends Model
 {
     use HasFactory, DateFormater;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'id_user',
         'id_car',
@@ -29,15 +24,12 @@ class Statistics extends Model
         'price_per_day',
         'discount',
         'reason_for_discount',
+        'note',
         'car_id',
         'user_id',
+        'total_price'
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'id' => 'integer',
         'car_id' => 'integer',
@@ -47,6 +39,14 @@ class Statistics extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     public static int $perPageStat = 10;
+
+    public function scopeGetExtendedRents(Builder $query, int $carId, string $createdAt)
+    {
+        return $query->with("extendedRents")
+            ->where("car_id", $carId)
+            ->where("created_at", $createdAt)
+            ->firstOrFail();
+    }
 
     protected function startDate(): Attribute
     {

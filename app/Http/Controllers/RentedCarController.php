@@ -2,21 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Handlers\RentedCarHandler;
 use App\Http\Requests\RentCarRequest;
-use App\Models\Car;
-use App\Models\ExtendRent;
+use App\Http\Requests\ReturnCarRequest;
 use App\Models\RentedCar;
-use App\Models\Statistics;
-use App\Models\User;
 use App\Repository\StatisticsCarsRepository;
 use App\Services\CarService;
 use App\Services\RentedCarService;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use App\Repository\RentedCarRepository;
 
 class RentedCarController extends Controller
@@ -31,7 +24,11 @@ class RentedCarController extends Controller
     }
     public function search(Request $request) : JsonResponse
     {
-        return response()->json(RentedCarRepository::search($request->query("term")), 200);
+        if($request->query("term"))
+        {
+            return response()->json(RentedCarRepository::search($request->query("term")), 200);
+        }
+        abort(404);
     }
 
     public function store(RentCarRequest $request, RentedCarService $rentedCarService) :JsonResponse
@@ -44,35 +41,40 @@ class RentedCarController extends Controller
         ]);
     }
 
-    /**
-     * When user returns car or rent is done
-     */
-    public function return(Request $request)
+    public function return(ReturnCarRequest $request, RentedCarService $rentedCarService)
     {
-        $result = RentedCarHandler::returnCar($request);
+        $carData = $request->validated();
+        $rentedCarService->returnCar($carData);
 
         return response()->json([
-            "message" => $result['message']
-        ], $result['statusCode']);
+            "message" => "Successfully returned car"
+        ]);
     }
-
-    /**
-     * Count rented cars per month or in total
-     */
-    public function total(Request $request)
+    public function countTotalCars(Request $request) :JsonResponse
     {
-        $results = RentedCarHandler::countTotalCars($request);
+        if(!$request->has("month")){
+            return response()->json([
+                "totalCars" => RentedCar::count()
+            ]);
+        }
+        $queryResult = StatisticsCarsRepository::rentByMonth();
+        if(empty($queryResult)){
+            return response()->json([
+                "totalCars" => 0
+            ]);
+        }
         return response()->json([
-            "total_cars" => $results['totalCars']
+            "totalCars" => $queryResult[0]->total_cars
         ]);
     }
 
-    /**
-     * Latest rented cars
-     */
-    public function latest()
+    public function latest(CarService $carService)
     {
-        return response()->json(RentedCarHandler::latestRented());
+        return response()->json(
+            $carService->getCarsWithImages(
+                RentedCar::select(["start_date", "return_date", "price_per_day", "car_id", "user_id"])
+            )
+        );
     }
 
 }

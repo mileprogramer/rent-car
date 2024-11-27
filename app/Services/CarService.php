@@ -18,7 +18,7 @@ use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 class CarService
 {
 
-    static function calculateTotalPrice(Statistics|Builder $statistic, $initialReturnDate) :int
+    function calculateTotalPrice(Statistics|Builder $statistic, $initialReturnDate) :int
     {
         if(!$statistic->extend_rent){
             $startDate = Carbon::createFromFormat('d/m/Y', trim($statistic->start_date));

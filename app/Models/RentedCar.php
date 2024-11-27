@@ -18,12 +18,6 @@ class RentedCar extends Model
     use HasFactory, DateFormater;
 
     protected $appends = ['extended_rents'];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'id_user',
         'id_car',
@@ -35,12 +29,6 @@ class RentedCar extends Model
         'car_id',
         'user_id',
     ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'id' => 'integer',
         'car_id' => 'integer',
@@ -53,28 +41,6 @@ class RentedCar extends Model
     }
 
     public static $carsPerPage = 10;
-
-    public static function rules(array $requestData = []) :array
-    {
-        return [
-            'user_id' => ["required", 'exists:users,id'],
-            'car_id' => ["required",
-                function($attribute, $value, $fail) use ($requestData) {
-                    $carExists = Car::where('status', Car::status())
-                        ->where('id', $requestData['car_id'])
-                        ->exists();
-                    if (!$carExists) {
-                        $fail('The selected car either does not exist or does not have the required status: ' . Car::status());
-                    }
-            }],
-            'start_date' => ["required", 'date'],
-            'return_date' => ["required", 'date', (new ReturnDate())->setData($requestData)],
-            'discount' => ["required", 'numeric', 'max:100', 'min:0'],
-            'reason_for_discount' => [(new ReasonForDiscount())->setData($requestData)],
-            'extended_rent' => 'bool',
-        ];
-    }
-
     protected function startDate(): Attribute
     {
         return Attribute::make(
