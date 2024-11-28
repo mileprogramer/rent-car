@@ -18,54 +18,7 @@ use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 class CarService
 {
 
-    function calculateTotalPrice(Statistics|Builder $statistic, $initialReturnDate) :int
-    {
-        if(!$statistic->extend_rent){
-            $startDate = Carbon::createFromFormat('d/m/Y', trim($statistic->start_date));
-            $totalPrice = $startDate->diffInDays(now()) * ($statistic->price_per_day - ($statistic->discount / 100) * $statistic->price_per_day);
-            return $totalPrice;
-        }
 
-        if($statistic->extend_rent)
-        {
-            $initialStartDate = Carbon::createFromFormat('d/m/Y', trim($statistic->start_date));
-            $firstValue = $initialStartDate->diffInDays(now()) * ($statistic->price_per_day - ($statistic->discount / 100) * $statistic->price_per_day);
-            $totalPrice = 0;
-            $extendedRents = $statistic->extendedRents;
-
-            $updatedExtendedRents = $extendedRents;
-
-            for ($i = $updatedExtendedRents->count() - 1; $i >= 0; $i--) {
-                $rent = $updatedExtendedRents[$i];
-
-                $returnDate = Carbon::createFromFormat('d/m/Y', $rent['return_date']);
-                $startDate = Carbon::createFromFormat('d/m/Y', $rent['start_date']);
-                $today = Carbon::now();
-
-                if ($returnDate->isAfter($today)) {
-                    $updatedExtendedRents[$i]['return_date'] = $today->format('d/m/Y');
-                }
-
-                if ($i === $updatedExtendedRents->count() - 1 && $startDate->isAfter($today)) {
-                    $updatedExtendedRents->pop();
-                }
-            }
-
-            foreach ($extendedRents as $extendedRent) {
-                $startDate = Carbon::createFromFormat('d/m/Y', trim($extendedRent->start_date));
-                $returnDate = Carbon::createFromFormat('d/m/Y', trim($extendedRent->return_date));
-
-                $totalDays = $returnDate->diffInDays($startDate);
-                $totalPriceForRent = $extendedRent->price_per_day * $totalDays;
-                $discountedPrice = $totalPriceForRent - ($totalPriceForRent * ($extendedRent->discount / 100));
-                $totalPrice += $discountedPrice;
-            }
-
-            return $totalPrice + $firstValue;
-
-        }
-        return 0;
-    }
 
     /**
      * @throws FileDoesNotExist

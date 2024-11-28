@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class RentedCarRepository
 {
-    static function search(string $searchTerm)
+    function search(string $searchTerm)
     {
         $data = \App\Models\RentedCar::join('cars', 'rented_cars.car_id', '=', 'cars.id')
             ->join('users', 'rented_cars.user_id', '=', 'users.id')

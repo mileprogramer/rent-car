@@ -11,6 +11,11 @@ use Carbon\Carbon;
 
 class RentedCarService
 {
+    public function __construct(StatisticsService $statisticsService)
+    {
+        $this->statisticsService = $statisticsService;
+    }
+
     public function rentCar(array $rentCarData) :void
     {
         $car = Car::where('id', $rentCarData['car_id'])->firstOrFail();
@@ -26,10 +31,10 @@ class RentedCarService
         $car->update(['status' => RentedCar::status()]);
     }
 
-    public function returnCar(ReturnCarRequest $request) :void
+    public function returnCar(array $returnInfo) :void
     {
-        $carId = $request->car_id;
-        $note = $request->note;
+        $carId = $returnInfo["car_id"];
+        $note = $returnInfo["note"];
 
         $rentedCar = RentedCar::where('car_id', $carId)->firstOrFail();
 
@@ -46,11 +51,9 @@ class RentedCarService
                 ->update(["return_date" => Carbon::now()->format("Y-m-d")]);
         }
 
-        $carService = new CarService();
-
         $statistic->real_return_date = Carbon::now()->format("Y-m-d");
         $statistic->note = $note;
-        $statistic->total_price = $carService->calculateTotalPrice($statistic, $rentedCar->return_date);
+        $statistic->total_price = $this->statisticsService->calculateTotalPrice($statistic);
         $statistic->save();
 
         $rentedCar->delete();

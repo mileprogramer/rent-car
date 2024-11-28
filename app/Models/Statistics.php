@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\CarsWithImages;
 use App\Traits\DateFormater;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class Statistics extends Model
 {
@@ -48,6 +46,12 @@ class Statistics extends Model
             ->firstOrFail();
     }
 
+    public function scopeGetStatsForRentedCar(Builder $query, int $carId, string $createdAt) :Builder
+    {
+        return $query->where("car_id", $carId)
+            ->where("created_at", $createdAt);
+    }
+
     protected function startDate(): Attribute
     {
         return Attribute::make(
@@ -80,7 +84,8 @@ class Statistics extends Model
 
     public function extendedRents() :HasMany
     {
-        return $this->hasMany(ExtendRent::class, 'statistics_id', 'id')->orderBy("created_at", "desc");
+        return $this->hasMany(ExtendRent::class, 'statistics_id', 'id')
+            ->orderBy("created_at", "asc");
     }
 
     public function car(): BelongsTo

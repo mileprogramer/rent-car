@@ -14,7 +14,7 @@ class ReturnCarRequest extends FormRequest
     {
         return [
             "car_id" => "required",
-            "note" => ["string, max:1000, min:3"]
+            "note" => ["string", "max:1000", "min:3"]
         ];
     }
 }

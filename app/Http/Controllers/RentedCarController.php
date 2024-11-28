@@ -22,11 +22,11 @@ class RentedCarController extends Controller
                 ->paginate(RentedCar::$carsPerPage)
         );
     }
-    public function search(Request $request) : JsonResponse
+    public function search(Request $request, RentedCarRepository $rentedCarRepository) : JsonResponse
     {
         if($request->query("term"))
         {
-            return response()->json(RentedCarRepository::search($request->query("term")), 200);
+            return response()->json($rentedCarRepository->search($request->query("term")), 200);
         }
         abort(404);
     }
