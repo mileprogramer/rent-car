@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(DeleteCarController::class)->group(function(){
         Route::get("cars/deleted", 'index');
-        Route::get("car/delete", 'delete')->middleware("super_admin");
+        Route::post("car/delete", 'delete')->middleware("super_admin");
     });
 
     // Rented cars get
