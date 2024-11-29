@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\Rule;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,12 +12,6 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasFactory, HasApiTokens;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         "name",
         "password",
@@ -27,11 +21,6 @@ class User extends Authenticatable
         'email',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'id' => 'integer',
     ];
@@ -48,22 +37,15 @@ class User extends Authenticatable
         ];
     }
 
-    public static function rulesEdit(array $requestData = []) :array
+    public function scopeSearch(Builder $query, $searchTerm)  :Builder
     {
-        return [
-            "id" => ["numeric"],
-            "name" => ["required", "max:255", "min:3", "string"],
-            "card_id" => ["required", "max:20", Rule::unique("users")->where(function ($query) use ($requestData) {
-                return $query->where('card_id', '!=', $requestData['card_id']);
-            }),],
-            "phone" => ["required", ],
-            "email" => ["required", "email"],
-        ];
+        return $query->where("name", "like" , "%" . $searchTerm . "%")
+            ->orWhere("card_id", "like", "%" . $searchTerm. "%");
     }
 
 
     public function rentedCars(): HasMany
     {
-        return $this->hasMany(RentedCars::class);
+        return $this->hasMany(RentedCar::class);
     }
 }
