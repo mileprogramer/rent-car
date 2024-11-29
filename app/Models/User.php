@@ -25,6 +25,15 @@ class User extends Authenticatable
         'id' => 'integer',
     ];
 
+    const USER = "user";
+    const ADMIN = "admin";
+    const SUPER_ADMIN = "super_admin";
+
+    public function isSuperAdmin()
+    {
+        return $this->role === self::SUPER_ADMIN;
+    }
+
     public static $usersPerPage = 10;
 
     public static function rules(array $requestData = []) :array

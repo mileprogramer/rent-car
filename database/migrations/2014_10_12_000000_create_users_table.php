@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone', 20);
             $table->string('card_id', 20)->unique();
             $table->string('password');
+            $table->string("role");
             $table->rememberToken();
             $table->timestamps();
         });
