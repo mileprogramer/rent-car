@@ -14,7 +14,7 @@ use App\Repository\RentedCarRepository;
 
 class RentedCarController extends Controller
 {
-    public function index() : JsonResponse
+    public function getRentedCars() : JsonResponse
     {
         return response()->json(
             RentedCar::with("car:id,license", "user:id,name,phone,card_id")
@@ -22,7 +22,7 @@ class RentedCarController extends Controller
                 ->paginate(RentedCar::$carsPerPage)
         );
     }
-    public function search(Request $request, RentedCarRepository $rentedCarRepository) : JsonResponse
+    public function searchRentedCars(Request $request, RentedCarRepository $rentedCarRepository) : JsonResponse
     {
         if($request->query("term"))
         {
@@ -31,7 +31,7 @@ class RentedCarController extends Controller
         abort(404);
     }
 
-    public function store(RentCarRequest $request, RentedCarService $rentedCarService) :JsonResponse
+    public function rentCar(RentCarRequest $request, RentedCarService $rentedCarService) :JsonResponse
     {
         $rentCarData = $request->validated();
         $rentedCarService->rentCar($rentCarData);
@@ -41,7 +41,7 @@ class RentedCarController extends Controller
         ]);
     }
 
-    public function return(ReturnCarRequest $request, RentedCarService $rentedCarService)
+    public function returnCar(ReturnCarRequest $request, RentedCarService $rentedCarService)
     {
         $carData = $request->validated();
         $rentedCarService->returnCar($carData);
@@ -68,7 +68,7 @@ class RentedCarController extends Controller
         ]);
     }
 
-    public function latest(CarService $carService)
+    public function latestRentedCars(CarService $carService)
     {
         return response()->json(
             $carService->getCarsWithImages(

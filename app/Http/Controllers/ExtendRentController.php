@@ -12,7 +12,7 @@ use Carbon\Carbon;
 
 class ExtendRentController extends Controller
 {
-    public function store (ExtendRentRequest $request, FindReturnDate $findReturnDate)
+    public function extendRent(ExtendRentRequest $request, FindReturnDate $findReturnDate)
     {
         $data = $request->validated();
         $rentedCar = RentedCar::with('inStatistics')

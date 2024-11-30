@@ -19,49 +19,49 @@ Route::middleware('auth:sanctum')->get('/admin/logged', function (Request $reque
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(UserController::class)->group(function (){
-        Route::get('users', 'index');
-        Route::get('users/search', 'search');
+        Route::get('users', 'getUsers');
+        Route::get('users/search', 'searchUsers');
 
-        Route::post('user/edit', 'update');
+        Route::post('user/edit', 'updateUser');
     });
 
     Route::controller(CarController::class)->group(function(){
-        Route::get('cars', 'index');
-        Route::get('cars/search', 'search');
-        Route::get('cars/available', 'available');
+        Route::get('cars', 'getCars');
+        Route::get('cars/search', 'searchCars');
+        Route::get('cars/available', 'availableCars');
         Route::get('cars/available/search', 'searchAvailable');
-        Route::get('cars/available/total', 'total');
+        Route::get('cars/available/total', 'totalAvailableCars');
 
-        Route::post('/car/add', 'store');
-        Route::post('/car/update/', 'update');
+        Route::post('/car/add', 'createNewCar');
+        Route::post('/car/update/', 'updateCar');
     });
 
     Route::controller(DeleteCarController::class)->group(function(){
-        Route::get("cars/deleted", 'index');
-        Route::post("car/delete", 'delete')->middleware("super_admin");
+        Route::get("cars/deleted", 'getDeletedCars');
+        Route::post("car/delete", 'deleteCar')->middleware("super_admin");
     });
 
     // Rented cars get
     Route::controller(RentedCarController::class)->group(function(){
-        Route::get('cars/rented', 'index');
-        Route::get('cars/rented/search', 'search');
+        Route::get('cars/rented', 'getRentedCars');
+        Route::get('cars/rented/search', 'searchRentedCars');
         Route::get('cars/rented/total', 'countTotalCars');
-        Route::get('cars/rented/latest', 'latest');
+        Route::get('cars/rented/latest', 'latestRentedCars');
 
         // Rented cars post
-        Route::post('/car/rent', 'store');
-        Route::post('/car/rent/return', 'return');
+        Route::post('/car/rent', 'rentCar');
+        Route::post('/car/rent/return', 'returnCar');
     });
 
     Route::controller(StatisticController::class)->group(function(){
         // Statistics get
-        Route::get('cars/statistics', 'index');
+        Route::get('cars/statistics', 'getStats');
         Route::get('cars/returned/total', 'returnedTotal');
-        Route::get('cars/returned/latest', 'latest');
-        Route::get('cars/statistics/search', 'search');
+        Route::get('cars/returned/latest', 'latestReturned');
+        Route::get('cars/statistics/search', 'searchStatistics');
     });
 
-    Route::post('/car/rent/extend', [ExtendRentController::class, 'store']);
+    Route::post('/car/rent/extend', [ExtendRentController::class, 'extendRent']);
 });
 
 

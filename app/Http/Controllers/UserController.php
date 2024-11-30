@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    public function getUsers()
     {
         return response()->json(
             User::select("id", "name", "email", "phone", "card_id")
@@ -17,7 +17,7 @@ class UserController extends Controller
         );
     }
 
-    public function search(Request $request)
+    public function searchUsers(Request $request)
     {
         return response()->json(
             User::select("id", "name", "email", "phone", "card_id")
@@ -26,7 +26,7 @@ class UserController extends Controller
         );
     }
 
-    public function update(EditUserRequest $request)
+    public function updateUser(EditUserRequest $request)
     {
         $data = $request->validated();
         User::where("id", $data['id'])

@@ -10,15 +10,12 @@ use Illuminate\Http\Request;
 class DeleteCarController extends Controller
 {
 
-    /**
-     * Display the deleted cars
-     */
-    public function index()
+    public function getDeletedCars()
     {
         return response()->json(DeleteCar::paginate());
     }
 
-    public function delete(DeleteCarRequest $request)
+    public function deleteCar(DeleteCarRequest $request)
     {
         $carData = $request->validated();
         DeleteCar::create($carData);

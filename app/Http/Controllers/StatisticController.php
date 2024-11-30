@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class StatisticController extends Controller
 {
-    public function index()
+    public function getStats()
     {
         return response()->json(
             Statistics::with('extendedRents', 'car', 'user')
@@ -20,7 +20,7 @@ class StatisticController extends Controller
         );
     }
 
-    public function search(Request $request, StatisticsService $statisticsService)
+    public function searchStatistics(Request $request, StatisticsService $statisticsService)
     {
         return response()->json(
             $statisticsService->search($request)
@@ -44,7 +44,7 @@ class StatisticController extends Controller
         abort(404);
     }
 
-    public function latest(CarService $carService)
+    public function latestReturned(CarService $carService)
     {
         return response()->json(
             $carService->getCarsWithImages(

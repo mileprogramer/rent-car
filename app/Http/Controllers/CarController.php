@@ -3,26 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Enums\CarStatus;
-use App\Handlers\CarHandler;
-use App\Http\Requests\CarImagesRequest;
-use App\Http\Requests\DefaultCarRequest;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
 use App\Models\Car;
-use App\Models\RentedCar;
-use App\Repository\StatisticsCarsRepository;
 use App\Services\CarService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class CarController extends Controller
 {
-    public function index(CarService $carService) :JsonResponse
+    public function getCars(CarService $carService) :JsonResponse
     {
         $carsStatus = CarStatus::getStatusByOrder();
         $cars = $carService->getCarsWithImages(
@@ -32,7 +23,7 @@ class CarController extends Controller
         return response()->json($cars);
     }
 
-    public function available() :JsonResponse
+    public function availableCars() :JsonResponse
     {
         return response()->json(
             Car::availableCars()
@@ -51,7 +42,7 @@ class CarController extends Controller
         );
     }
 
-    public function store(StoreCarRequest $request, CarService $carService) :JsonResponse
+    public function createNewCar(StoreCarRequest $request, CarService $carService) :JsonResponse
     {
         $carData = $request->validated();
 
@@ -64,14 +55,14 @@ class CarController extends Controller
         ], 201);
     }
 
-    public function total() :JsonResponse
+    public function totalAvailableCars() :JsonResponse
     {
         return response()->json([
             "total_cars" => Car::totalAvailableCars()
         ]);
     }
 
-    public function update(CarService $carService, UpdateCarRequest $request) : JsonResponse
+    public function updateCar(CarService $carService, UpdateCarRequest $request) : JsonResponse
     {
         $car = Car::where("id", $request->id)->firstOrFail();
         $carData = $request->validated();
@@ -92,7 +83,7 @@ class CarController extends Controller
         ]);
     }
 
-    public function search(Request $request, CarService $carService) :JsonResponse
+    public function searchCars(Request $request, CarService $carService) :JsonResponse
     {
         if($request->query("term"))
         {
