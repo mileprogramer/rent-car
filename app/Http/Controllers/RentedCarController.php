@@ -54,17 +54,17 @@ class RentedCarController extends Controller
     {
         if(!$request->has("month")){
             return response()->json([
-                "totalCars" => RentedCar::count()
+                "total_cars" => RentedCar::count()
             ]);
         }
         $queryResult = StatisticsCarsRepository::rentByMonth();
         if(empty($queryResult)){
             return response()->json([
-                "totalCars" => 0
+                "total_cars" => 0
             ]);
         }
         return response()->json([
-            "totalCars" => $queryResult[0]->total_cars
+            "total_cars" => $queryResult[0]->total_cars
         ]);
     }
 
