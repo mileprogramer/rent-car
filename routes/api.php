@@ -59,7 +59,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('cars/returned/total', 'returnedTotal');
         Route::get('cars/returned/latest', 'latest');
         Route::get('cars/statistics/search', 'search');
-        Route::get('cars/best-selling', 'bestSelling');
     });
 
     Route::post('/car/rent/extend', [ExtendRentController::class, 'store']);
