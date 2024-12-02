@@ -15,12 +15,9 @@ https://rentcardip.mileprogramer.rs
 This project follows the standard Laravel structure. However, for handling requests and responses, I have structured the business logic as follows to keep the controllers clean:
 
 1. **Controller**  
-   The controller is responsible for accepting the request and passing it to the appropriate handler.
-   
-2. **Handler**  
-   The handler manages the business logic and performs CRUD operations.
+   The controller is responsible for accepting the request calling the request instace of class and operate with data.
 
-3. **Repository**  
+2. **Repository**  
    The repository contains complex SQL queries and logic that interact with the database.
 
 This structure separates concerns, making the application easier to maintain and extend.
